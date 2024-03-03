@@ -10,6 +10,27 @@ namespace BerichtsheftBuilder
 {
     internal class ProfileStorage
     {
+        private bool created;
+        public bool Created
+        {
+            get => created;
+            set => created = value;
+        }
+
+        private string name;
+        public string Name
+        {
+            get => name;
+            set => name = value;
+        }
+
+        private string ausbilderName;
+        public string AusbilderName
+        {
+            get => ausbilderName;
+            set => ausbilderName = value;
+        }
+
         private DateTime ausbildungsstart;
         public DateTime Ausbildungsstart
         {
@@ -22,6 +43,13 @@ namespace BerichtsheftBuilder
         {
             get => ausbildungsend;
             set => ausbildungsend = value;
+        }
+
+        private string ausbildungsabteilung;
+        public string Ausbildungsabteilung
+        {
+            get => ausbildungsabteilung;
+            set => ausbildungsabteilung = value;
         }
 
         private List<TaskDTO> taskList;
@@ -41,6 +69,9 @@ namespace BerichtsheftBuilder
 
         public ProfileStorage()
         {
+            created = false;
+            name = "";
+            ausbilderName = "";
             ausbildungsstart = new DateTime();
             ausbildungsend = new DateTime();
             taskList = new List<TaskDTO>();
@@ -84,7 +115,7 @@ namespace BerichtsheftBuilder
                     return false;
                 }
 
-                if(!stream.CanWrite)
+                if (!stream.CanWrite)
                 {
                     stream.Close();
                     return false;
@@ -92,8 +123,12 @@ namespace BerichtsheftBuilder
 
                 IFormatter formatter = new BinaryFormatter();
 
+                BinaryWriter(formatter, stream, created);
+                BinaryWriter(formatter, stream, name);
+                BinaryWriter(formatter, stream, ausbilderName);
                 BinaryWriter(formatter, stream, ausbildungsstart);
                 BinaryWriter(formatter, stream, ausbildungsend);
+                BinaryWriter(formatter, stream, ausbildungsabteilung);
                 BinaryWriter(formatter, stream, taskList);
 
                 stream.Close();
@@ -117,13 +152,13 @@ namespace BerichtsheftBuilder
                     return false;
                 }
 
-                if(!stream.CanRead)
+                if (!stream.CanRead)
                 {
                     stream.Close();
                     return false;
                 }
 
-                if(stream.Length == 0)
+                if (stream.Length == 0)
                 {
                     stream.Close();
                     return false;
@@ -131,8 +166,12 @@ namespace BerichtsheftBuilder
 
                 IFormatter formatter = new BinaryFormatter();
 
+                created = (bool)BinaryRead(formatter, stream);
+                name = (string)BinaryRead(formatter, stream);
+                ausbilderName = (string)BinaryRead(formatter, stream);
                 ausbildungsstart = (DateTime)BinaryRead(formatter, stream);
                 ausbildungsend = (DateTime)BinaryRead(formatter, stream);
+                ausbildungsabteilung = (string)BinaryRead(formatter, stream);
                 taskList = (List<TaskDTO>)BinaryRead(formatter, stream);
 
                 stream.Close();
@@ -149,7 +188,7 @@ namespace BerichtsheftBuilder
 
         public bool addTask(DateUtils.CalendarWeek calendarWeek, string job, DurationDTO duration)
         {
-            if(!duration.valid())
+            if (!duration.valid())
             {
                 return false;
             }

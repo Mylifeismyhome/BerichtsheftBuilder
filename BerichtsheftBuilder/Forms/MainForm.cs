@@ -1,11 +1,16 @@
 ﻿using BerichtsheftBuilder.dto;
 using BerichtsheftBuilder.Form;
+using BerichtsheftBuilder.Forms;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using QuestPDF.Previewer;
 
 namespace BerichtsheftBuilder
 {
@@ -20,15 +25,17 @@ namespace BerichtsheftBuilder
         public MainForm()
         {
             InitializeComponent();
-
-            profileStorage.OnRead += OnProfileStorageRead;
-            profileStorage.Read();
+            applyProfile();
         }
 
-        private void OnProfileStorageRead()
+        private void applyProfile()
         {
+            TB_Name.Text = profileStorage.Name;
+            TB_AusbilderName.Text = profileStorage.AusbilderName;
             DTP_Ausbildungsstart.Value = profileStorage.Ausbildungsstart;
             DTP_Ausbildungsende.Value = profileStorage.Ausbildungsend;
+            TB_Ausbildungsabteilung.Text = profileStorage.Ausbildungsabteilung;
+
             UpdateCalenderWeekComboBox();
             SetComboBoxToCurrentCalenderWeek();
         }
@@ -91,24 +98,6 @@ namespace BerichtsheftBuilder
             }
         }
 
-        private void DTP_Ausbildungsstart_ValueChanged(object sender, EventArgs e)
-        {
-            System.Windows.Forms.DateTimePicker dateTimePicker = (System.Windows.Forms.DateTimePicker)sender;
-            profileStorage.Ausbildungsstart = dateTimePicker.Value;
-            profileStorage.Save();
-
-            UpdateCalenderWeekComboBox();
-        }
-
-        private void DTP_Ausbildungsende_ValueChanged(object sender, EventArgs e)
-        {
-            System.Windows.Forms.DateTimePicker dateTimePicker = (System.Windows.Forms.DateTimePicker)sender;
-            profileStorage.Ausbildungsend = dateTimePicker.Value;
-            profileStorage.Save();
-
-            UpdateCalenderWeekComboBox();
-        }
-
         private void LV_Task_SelectedIndexChanged(object sender, EventArgs e)
         {
 
@@ -161,6 +150,107 @@ namespace BerichtsheftBuilder
             //MessageBox.Show(string.Format("Die Anzahl von [{0}] Element(en) wurde(n) erfolgreich entfernt.", countDeleted), "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             updateTaskListView();
+        }
+
+        private void BTN_Modify_Click(object sender, EventArgs e)
+        {
+            Profile profile = new Profile();
+            profile.IsModifyMode = true;
+            DialogResult result = profile.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                applyProfile();
+            }
+        }
+
+        private void BTN_Generate_Click(object sender, EventArgs e)
+        {
+            string html = Markdig.Markdown.ToHtml(BerichtsheftBuilder.Layout.md);
+
+            Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+
+                    page.Header()
+                        .Padding(10.0f)
+                        .ShowOnce()
+                        .Row(row =>
+                        {
+                            row.RelativeItem()
+                                .AlignLeft()
+                                .Column(column =>
+                                {
+                                    column.Item().Text(text =>
+                                    {
+                                        text.Span("Ausbildungsnachweis Nr.");
+                                        text.Span(" ");
+                                        text.Span("test").SemiBold();
+                                    });
+
+                                    column.Item().Text(text =>
+                                    {
+                                        text.Span("Ausbildungswoche vom");
+                                        text.Span(" ");
+                                        text.Span("01.08.2023").SemiBold();
+                                        text.Span(" ");
+                                        text.Span("bis");
+                                        text.Span(" ");
+                                        text.Span("20.10.2023").SemiBold();
+                                    });
+
+                                    column.Item().Text(text =>
+                                    {
+                                        text.Span("Ausbildungsjahr:");
+                                        text.Span(" ");
+                                        text.Span("1").SemiBold();
+                                    });
+                                });
+
+                            row.RelativeItem()
+                                .AlignRight()
+                                .Column(column =>
+                                {
+                                    column.Item().Text(text =>
+                                    {
+                                        text.Span("Name:");
+                                        text.Span(" ");
+                                        text.Span("Tobias Staack").SemiBold();
+                                    });
+
+                                    column.Item().Text(text =>
+                                    {
+                                        text.Span("Ausbildungsabteilung:");
+                                        text.Span(" ");
+                                        text.Span("Anwendungsentwicklung").SemiBold();
+                                    });
+                                });
+                        });
+
+                    page.Content().Row(row =>
+                    {
+                        row.RelativeItem(12.0f)
+                            .Padding(10.0f)
+                            .Border(1.0f)
+                            .BorderColor("#000000")
+                            .ExtendVertical()
+                            .Column(column =>
+                            {
+                                column.Item()
+                                    .Padding(10.0f)
+                                    .Text(text =>
+                                    {
+                                        text.Span("Betriebliche Tätigkeiten");
+                                    });
+
+                                column.Item()
+                                    .LineHorizontal(1.0f);
+                            });
+                    });
+                });
+
+            }).GeneratePdf("output.pdf");
         }
     }
 }
