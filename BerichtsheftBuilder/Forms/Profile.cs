@@ -25,11 +25,10 @@ namespace BerichtsheftBuilder.Forms
         public Profile()
         {
             InitializeComponent();
-            applyProfile();
             isModifyMode = false;
         }
 
-        private void applyProfile()
+        public void applyProfile()
         {
             TB_AuszubildenderName.Text = profileStorage.Name;
             TB_AusbilderName.Text = profileStorage.AusbilderName;

@@ -1,7 +1,6 @@
 ﻿using BerichtsheftBuilder.dto;
 using BerichtsheftBuilder.Form;
 using BerichtsheftBuilder.Forms;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -9,8 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
-using QuestPDF.Previewer;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BerichtsheftBuilder
 {
@@ -155,6 +153,7 @@ namespace BerichtsheftBuilder
         private void BTN_Modify_Click(object sender, EventArgs e)
         {
             Profile profile = new Profile();
+            profile.applyProfile();
             profile.IsModifyMode = true;
             DialogResult result = profile.ShowDialog();
             if (result == DialogResult.OK)
@@ -165,8 +164,6 @@ namespace BerichtsheftBuilder
 
         private void BTN_Generate_Click(object sender, EventArgs e)
         {
-            string html = Markdig.Markdown.ToHtml(BerichtsheftBuilder.Layout.md);
-
             Document.Create(container =>
             {
                 container.Page(page =>
@@ -174,6 +171,7 @@ namespace BerichtsheftBuilder
                     page.Size(PageSizes.A4);
 
                     page.Header()
+                        .Background("#44d62c")
                         .Padding(10.0f)
                         .ShowOnce()
                         .Row(row =>
@@ -184,27 +182,56 @@ namespace BerichtsheftBuilder
                                 {
                                     column.Item().Text(text =>
                                     {
-                                        text.Span("Ausbildungsnachweis Nr.");
-                                        text.Span(" ");
-                                        text.Span("test").SemiBold();
+                                        text.Span("Ausbildungsnachweis Nr.")
+                                            .FontColor("#F5F5F5");
+
+                                        text.Span(" ")
+                                            .FontColor("#F5F5F5");
+
+                                        text.Span("test")
+                                            .SemiBold()
+                                            .FontColor("#F5F5F5");
                                     });
 
                                     column.Item().Text(text =>
                                     {
-                                        text.Span("Ausbildungswoche vom");
-                                        text.Span(" ");
-                                        text.Span("01.08.2023").SemiBold();
-                                        text.Span(" ");
-                                        text.Span("bis");
-                                        text.Span(" ");
-                                        text.Span("20.10.2023").SemiBold();
+                                        text.Span("Ausbildungswoche vom")
+                                            .FontColor("#F5F5F5");
+
+                                        text.Span(" ")
+                                            .FontColor("#F5F5F5");
+
+                                        text.Span("01.08.2023")
+                                            .SemiBold()
+                                            .FontColor("#F5F5F5");
+
+                                        text.Span(" ")
+                                            .FontColor("#F5F5F5");
+
+                                        text.Span("bis")
+                                            .FontColor("#F5F5F5");
+
+                                        text.Span(" ")
+                                            .FontColor("#F5F5F5");
+
+                                        text.Span("20.10.2023")
+                                            .SemiBold()
+                                            .FontColor("#F5F5F5");
+
                                     });
 
                                     column.Item().Text(text =>
                                     {
-                                        text.Span("Ausbildungsjahr:");
-                                        text.Span(" ");
-                                        text.Span("1").SemiBold();
+                                        text.Span("Ausbildungsjahr:")
+                                            .FontColor("#F5F5F5");
+
+                                        text.Span(" ")
+                                            .FontColor("#F5F5F5");
+
+                                        text.Span("1")
+                                            .SemiBold()
+                                            .FontColor("#F5F5F5");
+
                                     });
                                 });
 
@@ -214,26 +241,37 @@ namespace BerichtsheftBuilder
                                 {
                                     column.Item().Text(text =>
                                     {
-                                        text.Span("Name:");
-                                        text.Span(" ");
-                                        text.Span("Tobias Staack").SemiBold();
+                                        text.Span("Name:")
+                                            .FontColor("#F5F5F5");
+
+                                        text.Span(" ")
+                                            .FontColor("#F5F5F5");
+
+                                        text.Span("Tobias Staack")
+                                            .SemiBold()
+                                            .FontColor("#F5F5F5");
                                     });
 
                                     column.Item().Text(text =>
                                     {
-                                        text.Span("Ausbildungsabteilung:");
-                                        text.Span(" ");
-                                        text.Span("Anwendungsentwicklung").SemiBold();
+                                        text.Span("Ausbildungsabteilung:")
+                                            .FontColor("#F5F5F5");
+
+                                        text.Span(" ")
+                                            .FontColor("#F5F5F5");
+
+                                        text.Span("Anwendungsentwicklung")
+                                            .SemiBold()
+                                            .FontColor("#F5F5F5");
                                     });
                                 });
                         });
 
-                    page.Content().Row(row =>
+                    page.Content()
+                    .Background("#F5F5F5")
+                    .Row(row =>
                     {
                         row.RelativeItem(12.0f)
-                            .Padding(10.0f)
-                            .Border(1.0f)
-                            .BorderColor("#000000")
                             .ExtendVertical()
                             .Column(column =>
                             {
@@ -241,12 +279,133 @@ namespace BerichtsheftBuilder
                                     .Padding(10.0f)
                                     .Text(text =>
                                     {
-                                        text.Span("Betriebliche Tätigkeiten");
+                                        text.Span("Betriebliche Tätigkeiten")
+                                            .FontColor("#212529");
                                     });
 
                                 column.Item()
-                                    .LineHorizontal(1.0f);
+                                    .Padding(10.0f)
+                                    .Text(text =>
+                                    {
+                                        text.Span("Berufsschule (Unterrichtsthemen)")
+                                            .FontColor("#212529");
+                                    });
                             });
+                    });
+
+                    page.Footer().Column(column =>
+                    {
+                        column.Item().Height(60).Row(row =>
+                        {
+                            row.RelativeItem().Background(Colors.Grey.Lighten2).Column(column =>
+                            {
+                                column.Item()
+                                    .Height(60)
+                                    .BorderBottom(1)
+                                    .BorderRight(1)
+                                    .BorderLeft(1)
+                                    .BorderColor("#FFFFFF");
+                            });
+
+                            row.RelativeItem().Background(Colors.Grey.Lighten2).Column(column =>
+                            {
+                                column.Item()
+                                    .Height(60)
+                                    .BorderBottom(1)
+                                    .BorderRight(1)
+                                    .BorderLeft(1)
+                                    .BorderColor("#FFFFFF");
+                            });
+
+                            row.RelativeItem().Background(Colors.Grey.Lighten2).Column(column =>
+                            {
+                                column.Item()
+                                    .Height(60)
+                                    .BorderBottom(1)
+                                    .BorderRight(1)
+                                    .BorderLeft(1)
+                                    .BorderColor("#FFFFFF");
+                            });
+
+                            row.RelativeItem().Background(Colors.Grey.Lighten2).Column(column =>
+                            {
+                                column.Item()
+                                    .Height(60)
+                                    .BorderBottom(1)
+                                    .BorderLeft(1)
+                                    .BorderColor("#FFFFFF");
+                            });
+                        });
+
+                        column.Item().Height(60).Row(row =>
+                        {
+                            row.RelativeItem().Background("#44d22c").Column(column =>
+                            {
+                                column.Item()
+                                    .Height(60)
+                                    .BorderTop(1)
+                                    .BorderRight(1)
+                                    .BorderLeft(1)
+                                    .BorderColor("#FFFFFF")
+                                    .AlignMiddle()
+                                    .Text(text =>
+                                    {
+                                        text.AlignCenter();
+                                        text.Span("Auszubildende/r Unterschrift und Datum")
+                                            .FontColor("#F5F5F5");
+                                    });
+                            });
+
+                            row.RelativeItem().Background("#44d22c").Column(column =>
+                            {
+                                column.Item()
+                                    .Height(60)
+                                    .BorderTop(1)
+                                    .BorderRight(1)
+                                    .BorderLeft(1)
+                                    .BorderColor("#FFFFFF")
+                                    .AlignMiddle()
+                                    .Text(text =>
+                                    {
+                                        text.AlignCenter();
+                                        text.Span("Ausbildender bzw. Ausbilder Unterschrift und Datum")
+                                            .FontColor("#F5F5F5");
+                                    });
+                            });
+
+                            row.RelativeItem().Background("#44d22c").Column(column =>
+                            {
+                                column.Item()
+                                    .Height(60)
+                                    .BorderTop(1)
+                                    .BorderRight(1)
+                                    .BorderLeft(1)
+                                    .BorderColor("#FFFFFF")
+                                    .AlignMiddle()
+                                    .Text(text =>
+                                    {
+                                        text.AlignCenter();
+                                        text.Span("Gesetzliche/r Vertreter Unterschrift und Datum")
+                                            .FontColor("#F5F5F5");
+                                    });
+                            });
+
+                            row.RelativeItem().Background("#44d22c").Column(column =>
+                            {
+                                column.Item()
+                                    .Height(60)
+                                    .BorderTop(1)
+                                    .BorderLeft(1)
+                                    .BorderColor("#FFFFFF")
+                                    .AlignMiddle()
+                                    .Text(text =>
+                                    {
+                                        text.AlignCenter();
+                                        text.Span("Bemerkungen")
+                                            .FontColor("#F5F5F5");
+                                    });
+                            });
+                        });
                     });
                 });
 
