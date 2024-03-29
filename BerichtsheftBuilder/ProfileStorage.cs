@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace BerichtsheftBuilder
 {
-    internal class ProfileStorage
+    public class ProfileStorage
     {
         private bool created;
         public bool Created

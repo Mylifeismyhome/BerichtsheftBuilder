@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace BerichtsheftBuilder.dto
 {
     [Serializable()]
-    internal class TaskDTO 
+    public class TaskDTO 
     {
         private DateUtils.CalendarWeek calendarWeek;
         public DateUtils.CalendarWeek CalendarWeek

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace BerichtsheftBuilder.dto
 {
     [Serializable()]
-    internal class DurationDTO
+    public class DurationDTO
     {
         private int hour;
         public int Hour
