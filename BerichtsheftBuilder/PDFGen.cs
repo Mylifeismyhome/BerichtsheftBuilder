@@ -1,14 +1,13 @@
-﻿using QuestPDF.Fluent;
-using QuestPDF.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using static BerichtsheftBuilder.DateUtils;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
 
 namespace BerichtsheftBuilder
 {
     public static class PDFGen
     {
-        public static void generate(string path, ProfileStorage profileStorage)
+        public static void generate(string path, ProfileStorage profileStorage, string fontFamily = "Helvetica")
         {
             Document.Create(container =>
             {
@@ -19,16 +18,16 @@ namespace BerichtsheftBuilder
                 {
                     DateUtils.CalendarWeek kalenderwoche = DateUtils.GetCalendarWeek(tmpAusbildungsstart);
 
-                    if(kalenderwoche.WeekStartDate.CompareTo(profileStorage.Ausbildungsstart) < 0)
+                    if (kalenderwoche.WeekStartDate.CompareTo(profileStorage.Ausbildungsstart) < 0)
                     {
                         kalenderwoche.WeekStartDate = profileStorage.Ausbildungsstart;
                     }
-                    else if(kalenderwoche.WeekEndDate.CompareTo(profileStorage.Ausbildungsend) > 0)
+                    else if (kalenderwoche.WeekEndDate.CompareTo(profileStorage.Ausbildungsend) > 0)
                     {
                         kalenderwoche.WeekEndDate = profileStorage.Ausbildungsend;
                     }
 
-                    if(tmpAusbildungsstart.CompareTo(yearEnd) >= 0)
+                    if (tmpAusbildungsstart.CompareTo(yearEnd) >= 0)
                     {
                         year++;
                         yearEnd = tmpAusbildungsstart.AddYears(1);
@@ -47,53 +46,65 @@ namespace BerichtsheftBuilder
                                     column.Item().Text(text =>
                                     {
                                         text.Span("Ausbildungsnachweis Nr.")
+                                            .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
 
                                         text.Span(" ")
+                                            .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
 
                                         text.CurrentPageNumber()
                                             .SemiBold()
+                                            .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
                                     });
 
                                     column.Item().Text(text =>
                                     {
                                         text.Span("Ausbildungswoche vom")
+                                            .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
 
                                         text.Span(" ")
+                                            .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
 
                                         text.Span(kalenderwoche.StartDateAsString())
                                             .SemiBold()
+                                            .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
 
                                         text.Span(" ")
+                                            .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
 
                                         text.Span("bis")
+                                            .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
 
                                         text.Span(" ")
+                                            .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
 
                                         text.Span(kalenderwoche.EndDateAsString())
                                             .SemiBold()
+                                            .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
-
                                     });
 
                                     column.Item().Text(text =>
                                     {
                                         text.Span("Ausbildungsjahr:")
+                                            .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
 
                                         text.Span(" ")
+                                            .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
 
                                         text.Span(year.ToString())
                                             .SemiBold()
+                                            .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
 
                                     });
@@ -106,26 +117,32 @@ namespace BerichtsheftBuilder
                                     column.Item().Text(text =>
                                     {
                                         text.Span("Name:")
+                                            .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
 
                                         text.Span(" ")
+                                            .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
 
                                         text.Span(profileStorage.Name)
                                             .SemiBold()
+                                            .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
                                     });
 
                                     column.Item().Text(text =>
                                     {
                                         text.Span("Ausbildungsabteilung:")
+                                            .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
 
                                         text.Span(" ")
+                                            .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
 
                                         text.Span(profileStorage.Ausbildungsabteilung)
                                             .SemiBold()
+                                            .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
                                     });
                                 });
@@ -133,38 +150,55 @@ namespace BerichtsheftBuilder
 
                         page.Content().Background("#F5F5F5").Row(row =>
                         {
-                            row.RelativeItem(12.0f)
-                                .ExtendVertical()
-                                .Column(column =>
-                                {
-                                    column.Item()
-                                        .Padding(10.0f)
-                                        .Text(text =>
-                                        {
-                                            text.Span("Betriebliche Tätigkeiten")
-                                                .FontColor("#212529");
-                                        });
-
-                                    List<dto.TaskDTO> taskList = profileStorage.TaskList.FindAll(it => it.CalendarWeek.Match(kalenderwoche));
-
-                                    taskList.ForEach(task => {
-                                        column.Item()
-                                            .PaddingLeft(20)
-                                            .Text(text =>
-                                            {
-                                                text.Span($"- {task.Job}")
+                            row.RelativeItem()
+                              .Column(column =>
+                              {
+                                  column.Item().Row(row =>
+                                  {
+                                      row.RelativeItem().Column(column =>
+                                      {
+                                          column.Item()
+                                              .Background(Colors.Grey.Lighten2)
+                                              .Padding(10.0f)
+                                              .Text(text =>
+                                              {
+                                                  text.Span("Betriebliche Tätigkeiten")
+                                                    .FontFamily(fontFamily)
                                                     .FontColor("#212529");
-                                            });
-                                    });
+                                              });
 
-                                    column.Item()
-                                        .Padding(10.0f)
-                                        .Text(text =>
-                                        {
-                                            text.Span("Berufsschule (Unterrichtsthemen)")
-                                                .FontColor("#212529");
-                                        });
-                                });
+                                          List<dto.TaskDTO> taskList = profileStorage.TaskList.FindAll(it => it.CalendarWeek.Match(kalenderwoche));
+
+                                          taskList.ForEach(task =>
+                                          {
+                                              column.Item()
+                                                  .PaddingLeft(20)
+                                                  .Text(text =>
+                                                  {
+                                                      text.Span($"- {task.Job}")
+                                                        .FontFamily(fontFamily)
+                                                        .FontColor("#212529");
+                                                  });
+                                          });
+                                      });
+                                  });
+
+                                  column.Item().ExtendVertical().AlignMiddle().Row(row =>
+                                  {
+                                      row.RelativeItem().Column(column =>
+                                      {
+                                          column.Item()
+                                              .Background(Colors.Grey.Lighten2)
+                                              .Padding(10.0f)
+                                              .Text(text =>
+                                              {
+                                                  text.Span("Berufsschule (Unterrichtsthemen)")
+                                                    .FontFamily(fontFamily)
+                                                    .FontColor("#212529");
+                                              });
+                                      });
+                                  });
+                              });
                         });
 
                         page.Footer().Column(column =>
@@ -226,6 +260,7 @@ namespace BerichtsheftBuilder
                                         {
                                             text.AlignCenter();
                                             text.Span("Auszubildende/r Unterschrift und Datum")
+                                                .FontFamily(fontFamily)
                                                 .FontColor("#F5F5F5");
                                         });
                                 });
@@ -243,6 +278,7 @@ namespace BerichtsheftBuilder
                                         {
                                             text.AlignCenter();
                                             text.Span("Ausbildender bzw. Ausbilder Unterschrift und Datum")
+                                                .FontFamily(fontFamily)
                                                 .FontColor("#F5F5F5");
                                         });
                                 });
@@ -260,6 +296,7 @@ namespace BerichtsheftBuilder
                                         {
                                             text.AlignCenter();
                                             text.Span("Gesetzliche/r Vertreter Unterschrift und Datum")
+                                                .FontFamily(fontFamily)
                                                 .FontColor("#F5F5F5");
                                         });
                                 });
@@ -276,6 +313,7 @@ namespace BerichtsheftBuilder
                                         {
                                             text.AlignCenter();
                                             text.Span("Bemerkungen")
+                                                .FontFamily(fontFamily)
                                                 .FontColor("#F5F5F5");
                                         });
                                 });
