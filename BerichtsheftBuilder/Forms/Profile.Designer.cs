@@ -43,6 +43,7 @@
             // 
             // DTP_Ausbildungsstart
             // 
+            DTP_Ausbildungsstart.Cursor = System.Windows.Forms.Cursors.Hand;
             DTP_Ausbildungsstart.Location = new System.Drawing.Point(156, 87);
             DTP_Ausbildungsstart.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             DTP_Ausbildungsstart.Name = "DTP_Ausbildungsstart";
@@ -51,6 +52,7 @@
             // 
             // DTP_Ausbildungsende
             // 
+            DTP_Ausbildungsende.Cursor = System.Windows.Forms.Cursors.Hand;
             DTP_Ausbildungsende.Location = new System.Drawing.Point(156, 121);
             DTP_Ausbildungsende.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             DTP_Ausbildungsende.Name = "DTP_Ausbildungsende";
@@ -89,6 +91,7 @@
             // 
             // TB_AuszubildenderName
             // 
+            TB_AuszubildenderName.Cursor = System.Windows.Forms.Cursors.IBeam;
             TB_AuszubildenderName.Location = new System.Drawing.Point(156, 27);
             TB_AuszubildenderName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             TB_AuszubildenderName.Name = "TB_AuszubildenderName";
@@ -97,6 +100,7 @@
             // 
             // TB_AusbilderName
             // 
+            TB_AusbilderName.Cursor = System.Windows.Forms.Cursors.IBeam;
             TB_AusbilderName.Location = new System.Drawing.Point(156, 57);
             TB_AusbilderName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             TB_AusbilderName.Name = "TB_AusbilderName";
@@ -115,6 +119,7 @@
             // 
             // BTN_Save
             // 
+            BTN_Save.Cursor = System.Windows.Forms.Cursors.Hand;
             BTN_Save.Location = new System.Drawing.Point(12, 252);
             BTN_Save.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             BTN_Save.Name = "BTN_Save";
@@ -136,6 +141,7 @@
             // 
             // TB_Ausbildungsabteilung
             // 
+            TB_Ausbildungsabteilung.Cursor = System.Windows.Forms.Cursors.IBeam;
             TB_Ausbildungsabteilung.Location = new System.Drawing.Point(156, 155);
             TB_Ausbildungsabteilung.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             TB_Ausbildungsabteilung.Name = "TB_Ausbildungsabteilung";

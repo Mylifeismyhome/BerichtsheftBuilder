@@ -168,6 +168,8 @@ namespace BerichtsheftBuilder
                                               });
 
                                           List<dto.TaskDTO> taskList = profileStorage.TaskList.FindAll(it => it.CalendarWeek.Match(kalenderwoche));
+                                          
+                                          taskList.RemoveAll(it => it.IsSchool);
 
                                           taskList.ForEach(task =>
                                           {
@@ -175,7 +177,7 @@ namespace BerichtsheftBuilder
                                                   .PaddingLeft(20)
                                                   .Text(text =>
                                                   {
-                                                      text.Span($"- {task.Job}")
+                                                      text.Span($"- {task.Desc}")
                                                         .FontFamily(fontFamily)
                                                         .FontColor("#212529");
                                                   });
@@ -196,6 +198,22 @@ namespace BerichtsheftBuilder
                                                     .FontFamily(fontFamily)
                                                     .FontColor("#212529");
                                               });
+
+                                          List<dto.TaskDTO> taskList = profileStorage.TaskList.FindAll(it => it.CalendarWeek.Match(kalenderwoche));
+
+                                          taskList.RemoveAll(it => !it.IsSchool);
+
+                                          taskList.ForEach(task =>
+                                          {
+                                              column.Item()
+                                                  .PaddingLeft(20)
+                                                  .Text(text =>
+                                                  {
+                                                      text.Span($"- {task.Desc}")
+                                                        .FontFamily(fontFamily)
+                                                        .FontColor("#212529");
+                                                  });
+                                          });
                                       });
                                   });
                               });

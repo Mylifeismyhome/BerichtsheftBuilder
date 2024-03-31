@@ -1,5 +1,4 @@
 ﻿using BerichtsheftBuilder.dto;
-using BerichtsheftBuilder.Form;
 using BerichtsheftBuilder.Forms;
 using System;
 using System.Collections.Generic;
@@ -69,14 +68,28 @@ namespace BerichtsheftBuilder
             DateUtils.CalendarWeek calendarWeek = calendarWeekList[CB_Kalenderwoche.SelectedIndex];
             calendarWeekTaskListView = profileStorage.TaskList.FindAll(it => it.CalendarWeek.Match(calendarWeek));
 
-            LV_Task.Items.Clear();
+            RTB_Task.Text = "";
 
             foreach (TaskDTO task in calendarWeekTaskListView)
             {
-                ListViewItem item = new ListViewItem();
-                item.Text = task.Job;
-                item.SubItems.Add(task.Duration.ToString());
-                LV_Task.Items.Add(item);
+                if(task.IsSchool)
+                {
+                    continue;
+                }
+
+                RTB_Task.Text += task.Desc + "\n";
+            }
+
+            RTB_SchoolTask.Text = "";
+
+            foreach (TaskDTO task in calendarWeekTaskListView)
+            {
+                if (!task.IsSchool)
+                {
+                    continue;
+                }
+
+                RTB_SchoolTask.Text += task.Desc + "\n";
             }
         }
 
@@ -94,57 +107,8 @@ namespace BerichtsheftBuilder
             }
         }
 
-        private void LV_Task_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void BTN_Add_Click(object sender, EventArgs e)
-        {
-            AddTaskForm addTaskForm = new AddTaskForm();
-
-            if (CB_Kalenderwoche.SelectedIndex > calendarWeekList.Count - 1)
-            {
-                return;
-            }
-
-            addTaskForm.CalendarWeek = calendarWeekList[CB_Kalenderwoche.SelectedIndex];
-
-            DialogResult result = addTaskForm.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                updateTaskListView();
-            }
-        }
-
         private void CB_Kalenderwoche_SelectedIndexChanged(object sender, EventArgs e)
         {
-            updateTaskListView();
-        }
-
-        private void BTN_Remove_Click(object sender, EventArgs e)
-        {
-            DialogResult result = MessageBox.Show(string.Format("Diese Aktion wird [{0}] Elemente löschen. Sind Sie sicher?", LV_Task.SelectedIndices.Count), "Info", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-            if (result != DialogResult.Yes)
-            {
-                return;
-            }
-
-            int countDeleted = 0;
-            foreach (int selectedIndex in LV_Task.SelectedIndices)
-            {
-                TaskDTO dto = calendarWeekTaskListView[selectedIndex];
-                if (!profileStorage.removeTask(dto))
-                {
-                    //MessageBox.Show("Es gab ein Problem beim Entfernen der Elemente. Bitte versuchen Sie es erneut.");
-                    continue;
-                }
-
-                ++countDeleted;
-            }
-
-            //MessageBox.Show(string.Format("Die Anzahl von [{0}] Element(en) wurde(n) erfolgreich entfernt.", countDeleted), "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
             updateTaskListView();
         }
 
@@ -163,6 +127,44 @@ namespace BerichtsheftBuilder
         private void BTN_Generate_Click(object sender, EventArgs e)
         {
             PDFGen.generate("output.pdf", profileStorage);
+        }
+
+        private void RTB_Task_TextChanged(object sender, EventArgs e)
+        {
+            List<string> taskDescList = RTB_Task.Text.Split('\n').ToList();
+            taskDescList.ForEach(it => it.Replace("\n", ""));
+            taskDescList.RemoveAll(it => string.IsNullOrEmpty(it));
+
+            DateUtils.CalendarWeek calendarWeek = calendarWeekList[CB_Kalenderwoche.SelectedIndex];
+
+            profileStorage.TaskList.RemoveAll(it => it.CalendarWeek.Match(calendarWeek) && !it.IsSchool);
+
+            foreach (string taskDesc in taskDescList)
+            {
+                TaskDTO taskDto = TaskDTO.valueOf(calendarWeek, taskDesc, false);
+                profileStorage.TaskList.Add(taskDto);
+            }
+
+            profileStorage.Save();
+        }
+
+        private void RTB_SchoolTask_TextChanged(object sender, EventArgs e)
+        {
+            List<string> taskDescList = RTB_SchoolTask.Text.Split('\n').ToList();
+            taskDescList.ForEach(it => it.Replace("\n", ""));
+            taskDescList.RemoveAll(it => string.IsNullOrEmpty(it));
+
+            DateUtils.CalendarWeek calendarWeek = calendarWeekList[CB_Kalenderwoche.SelectedIndex];
+
+            profileStorage.TaskList.RemoveAll(it => it.CalendarWeek.Match(calendarWeek) && it.IsSchool);
+
+            foreach (string taskDesc in taskDescList)
+            {
+                TaskDTO taskDto = TaskDTO.valueOf(calendarWeek, taskDesc, true);
+                profileStorage.TaskList.Add(taskDto);
+            }
+
+            profileStorage.Save();
         }
     }
 }

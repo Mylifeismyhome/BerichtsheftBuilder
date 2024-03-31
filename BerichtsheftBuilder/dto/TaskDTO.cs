@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BerichtsheftBuilder.dto
 {
@@ -15,31 +11,31 @@ namespace BerichtsheftBuilder.dto
             get => calendarWeek;
         }
 
-        private string job;
-        public string Job
+        private string desc;
+        public string Desc
         {
-            get => job;
+            get => desc;
         }
 
-        private DurationDTO duration;
-        public DurationDTO Duration
+        private bool isSchool;
+        public bool IsSchool
         {
-            get => duration;
+            get => isSchool;
         }
 
         protected TaskDTO()
         {
             calendarWeek = null;
-            job = "";
-            duration = DurationDTO.valueOf(0, 0);
+            desc = "";
+            isSchool = false;
         }
 
-        public static TaskDTO valueOf(DateUtils.CalendarWeek calendarWeek, string job, DurationDTO duration)
+        public static TaskDTO valueOf(DateUtils.CalendarWeek calendarWeek, string desc, bool isSchool)
         {
             TaskDTO dto = new TaskDTO();
             dto.calendarWeek = calendarWeek;
-            dto.job = job;
-            dto.duration = duration;
+            dto.desc = desc;
+            dto.isSchool = isSchool;
             return dto;
         }
     }

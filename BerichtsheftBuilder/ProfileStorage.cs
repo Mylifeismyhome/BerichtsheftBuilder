@@ -185,23 +185,5 @@ namespace BerichtsheftBuilder
 
             return false;
         }
-
-        public bool addTask(DateUtils.CalendarWeek calendarWeek, string job, DurationDTO duration)
-        {
-            if (!duration.valid())
-            {
-                return false;
-            }
-
-            TaskDTO dto = TaskDTO.valueOf(calendarWeek, job, duration);
-            taskList.Add(dto);
-
-            return true;
-        }
-
-        public bool removeTask(TaskDTO dto)
-        {
-            return taskList.Remove(dto);
-        }
     }
 }

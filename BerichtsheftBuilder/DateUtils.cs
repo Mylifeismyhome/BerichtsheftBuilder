@@ -23,6 +23,7 @@ namespace BerichtsheftBuilder
                 set => week = value;
             }
 
+            [NonSerialized]
             private CultureInfo cultureInfo;
             public CultureInfo CultureInfo
             {
