@@ -1,4 +1,5 @@
 ﻿using BerichtsheftBuilder.Forms;
+using BerichtsheftBuilder.service;
 using Microsoft.Extensions.DependencyInjection;
 using QuestPDF.Infrastructure;
 using System;
@@ -30,7 +31,7 @@ namespace BerichtsheftBuilder
         private static void cdi()
         {
             serviceCollection = new ServiceCollection();
-            serviceCollection.AddSingleton<ProfileStorage>();
+            serviceCollection.AddSingleton<ProfileService>();
             serviceProvider = serviceCollection.BuildServiceProvider();
         }
 
@@ -38,8 +39,8 @@ namespace BerichtsheftBuilder
         {
             System.Windows.Forms.Form startupForm = null;
 
-            ProfileStorage profileStorage = ServiceProvider.GetService<ProfileStorage>();
-            if (!profileStorage.Read())
+            ProfileService profileService = ServiceProvider.GetService<ProfileService>();
+            if (!profileService.Read())
             {
                 startupForm = new Profile();
             }

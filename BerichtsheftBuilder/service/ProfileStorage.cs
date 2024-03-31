@@ -5,70 +5,13 @@ using System.Runtime.Serialization;
 using System.Windows.Forms;
 using BerichtsheftBuilder.dto;
 using System.Collections.Generic;
-using static System.Net.WebRequestMethods;
 using Renci.SshNet;
-using SkiaSharp;
 using System.Linq;
-using Windows.Media.Protection.PlayReady;
 
-namespace BerichtsheftBuilder
+namespace BerichtsheftBuilder.service
 {
-    public class ProfileStorage
+    public class ProfileService : ProfileDto
     {
-        private ushort version;
-        public ushort Version
-        {
-            get => version;
-        }
-
-        private string name;
-        public string Name
-        {
-            get => name;
-            set => name = value;
-        }
-
-        private string ausbilderName;
-        public string AusbilderName
-        {
-            get => ausbilderName;
-            set => ausbilderName = value;
-        }
-
-        private DateTime ausbildungsstart;
-        public DateTime Ausbildungsstart
-        {
-            get => ausbildungsstart;
-            set => ausbildungsstart = value;
-        }
-
-        private DateTime ausbildungsend;
-        public DateTime Ausbildungsend
-        {
-            get => ausbildungsend;
-            set => ausbildungsend = value;
-        }
-
-        private string ausbildungsabteilung;
-        public string Ausbildungsabteilung
-        {
-            get => ausbildungsabteilung;
-            set => ausbildungsabteilung = value;
-        }
-
-        private List<TaskDto> taskList;
-        public List<TaskDto> TaskList
-        {
-            get => taskList;
-            set => taskList = value;
-        }
-
-        private SFTPDto sftp;
-        public SFTPDto Sftp
-        {
-            get => sftp;
-        }
-
         public delegate void OnReadDelegate();
         private OnReadDelegate onRead;
         public OnReadDelegate OnRead
@@ -77,7 +20,7 @@ namespace BerichtsheftBuilder
             set => onRead = value;
         }
 
-        public ProfileStorage()
+        public ProfileService()
         {
             version = 1;
             sftp = new SFTPDto();
@@ -160,7 +103,7 @@ namespace BerichtsheftBuilder
         {
             try
             {
-                using (FileStream stream = System.IO.File.Open("profile.bin", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+                using (FileStream stream = File.Open("profile.bin", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
                 {
                     if (stream == null || !stream.CanWrite)
                     {
@@ -182,7 +125,7 @@ namespace BerichtsheftBuilder
         {
             try
             {
-                using (FileStream stream = System.IO.File.Open("profile.bin", FileMode.OpenOrCreate, FileAccess.Read, FileShare.None))
+                using (FileStream stream = File.Open("profile.bin", FileMode.OpenOrCreate, FileAccess.Read, FileShare.None))
                 {
                     if (stream == null || !stream.CanRead || stream.Length == 0)
                     {
@@ -230,7 +173,7 @@ namespace BerichtsheftBuilder
                     memoryStream.Write(data, 0, data.Length);
                     memoryStream.Position = 0;
 
-                    ProfileStorage tempProfileStorage = new ProfileStorage();
+                    ProfileService tempProfileStorage = new ProfileService();
                     tempProfileStorage.readFromStream(memoryStream);
 
                     if (version != tempProfileStorage.version)

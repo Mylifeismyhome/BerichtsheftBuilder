@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using BerichtsheftBuilder.service;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +14,7 @@ namespace BerichtsheftBuilder.Forms
 {
     public partial class Profile : System.Windows.Forms.Form
     {
-        private ProfileStorage profileStorage = Program.ServiceProvider.GetService<ProfileStorage>();
+        private ProfileService profileService = Program.ServiceProvider.GetService<ProfileService>();
 
         private bool isModifyMode;
         public bool IsModifyMode
@@ -39,17 +40,17 @@ namespace BerichtsheftBuilder.Forms
 
         public void applyProfile()
         {
-            TB_AuszubildenderName.Text = profileStorage.Name;
-            TB_AusbilderName.Text = profileStorage.AusbilderName;
-            DTP_Ausbildungsstart.Value = profileStorage.Ausbildungsstart;
-            DTP_Ausbildungsende.Value = profileStorage.Ausbildungsend;
-            TB_Ausbildungsabteilung.Text = profileStorage.Ausbildungsabteilung;
+            TB_AuszubildenderName.Text = profileService.Name;
+            TB_AusbilderName.Text = profileService.AusbilderName;
+            DTP_Ausbildungsstart.Value = profileService.Ausbildungsstart;
+            DTP_Ausbildungsende.Value = profileService.Ausbildungsend;
+            TB_Ausbildungsabteilung.Text = profileService.Ausbildungsabteilung;
 
-            CB_IsEnabled.Checked = profileStorage.Sftp.IsEnabled;
-            TB_Host.Text = profileStorage.Sftp.Host;
-            NUD_Port.Value = profileStorage.Sftp.Port;
-            TB_Username.Text = profileStorage.Sftp.Username;
-            TB_Password.Text = profileStorage.Sftp.Password;
+            CB_IsEnabled.Checked = profileService.Sftp.IsEnabled;
+            TB_Host.Text = profileService.Sftp.Host;
+            NUD_Port.Value = profileService.Sftp.Port;
+            TB_Username.Text = profileService.Sftp.Username;
+            TB_Password.Text = profileService.Sftp.Password;
         }
 
         private void IsEnabledChanged()
@@ -78,19 +79,19 @@ namespace BerichtsheftBuilder.Forms
                 return;
             }
 
-            profileStorage.Name = TB_AuszubildenderName.Text;
-            profileStorage.AusbilderName = TB_AusbilderName.Text;
-            profileStorage.Ausbildungsstart = DTP_Ausbildungsstart.Value;
-            profileStorage.Ausbildungsend = DTP_Ausbildungsende.Value;
-            profileStorage.Ausbildungsabteilung = TB_Ausbildungsabteilung.Text;
+            profileService.Name = TB_AuszubildenderName.Text;
+            profileService.AusbilderName = TB_AusbilderName.Text;
+            profileService.Ausbildungsstart = DTP_Ausbildungsstart.Value;
+            profileService.Ausbildungsend = DTP_Ausbildungsende.Value;
+            profileService.Ausbildungsabteilung = TB_Ausbildungsabteilung.Text;
 
-            profileStorage.Sftp.IsEnabled = CB_IsEnabled.Checked;
-            profileStorage.Sftp.Host = TB_Host.Text;
-            profileStorage.Sftp.Port = Convert.ToInt32(NUD_Port.Value);
-            profileStorage.Sftp.Username = TB_Username.Text;
-            profileStorage.Sftp.Password = TB_Password.Text;
+            profileService.Sftp.IsEnabled = CB_IsEnabled.Checked;
+            profileService.Sftp.Host = TB_Host.Text;
+            profileService.Sftp.Port = Convert.ToInt32(NUD_Port.Value);
+            profileService.Sftp.Username = TB_Username.Text;
+            profileService.Sftp.Password = TB_Password.Text;
 
-            if (!profileStorage.Save())
+            if (!profileService.Save())
             {
                 return;
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using BerichtsheftBuilder.service;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 
@@ -7,24 +8,24 @@ namespace BerichtsheftBuilder
 {
     public static class PDFGen
     {
-        public static void generate(string path, ProfileStorage profileStorage, string fontFamily = "Helvetica")
+        public static void generate(string path, ProfileService profileService, string fontFamily = "Helvetica")
         {
             Document.Create(container =>
             {
-                DateTime tmpAusbildungsstart = profileStorage.Ausbildungsstart;
+                DateTime tmpAusbildungsstart = profileService.Ausbildungsstart;
                 int year = 1;
                 DateTime yearEnd = tmpAusbildungsstart.AddYears(1);
-                while (tmpAusbildungsstart.CompareTo(profileStorage.Ausbildungsend) <= 0)
+                while (tmpAusbildungsstart.CompareTo(profileService.Ausbildungsend) <= 0)
                 {
                     DateUtils.CalendarWeek kalenderwoche = DateUtils.GetCalendarWeek(tmpAusbildungsstart);
 
-                    if (kalenderwoche.WeekStartDate.CompareTo(profileStorage.Ausbildungsstart) < 0)
+                    if (kalenderwoche.WeekStartDate.CompareTo(profileService.Ausbildungsstart) < 0)
                     {
-                        kalenderwoche.WeekStartDate = profileStorage.Ausbildungsstart;
+                        kalenderwoche.WeekStartDate = profileService.Ausbildungsstart;
                     }
-                    else if (kalenderwoche.WeekEndDate.CompareTo(profileStorage.Ausbildungsend) > 0)
+                    else if (kalenderwoche.WeekEndDate.CompareTo(profileService.Ausbildungsend) > 0)
                     {
-                        kalenderwoche.WeekEndDate = profileStorage.Ausbildungsend;
+                        kalenderwoche.WeekEndDate = profileService.Ausbildungsend;
                     }
 
                     if (tmpAusbildungsstart.CompareTo(yearEnd) >= 0)
@@ -124,7 +125,7 @@ namespace BerichtsheftBuilder
                                             .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
 
-                                        text.Span(profileStorage.Name)
+                                        text.Span(profileService.Name)
                                             .SemiBold()
                                             .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
@@ -140,7 +141,7 @@ namespace BerichtsheftBuilder
                                             .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
 
-                                        text.Span(profileStorage.Ausbildungsabteilung)
+                                        text.Span(profileService.Ausbildungsabteilung)
                                             .SemiBold()
                                             .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
@@ -167,7 +168,7 @@ namespace BerichtsheftBuilder
                                                     .FontColor("#212529");
                                               });
 
-                                          List<dto.TaskDto> taskList = profileStorage.TaskList.FindAll(it => it.CalendarWeek.Match(kalenderwoche));
+                                          List<dto.TaskDto> taskList = profileService.TaskList.FindAll(it => it.CalendarWeek.Match(kalenderwoche));
                                           
                                           taskList.RemoveAll(it => it.IsSchool);
 
@@ -199,7 +200,7 @@ namespace BerichtsheftBuilder
                                                     .FontColor("#212529");
                                               });
 
-                                          List<dto.TaskDto> taskList = profileStorage.TaskList.FindAll(it => it.CalendarWeek.Match(kalenderwoche));
+                                          List<dto.TaskDto> taskList = profileService.TaskList.FindAll(it => it.CalendarWeek.Match(kalenderwoche));
 
                                           taskList.RemoveAll(it => !it.IsSchool);
 

@@ -5,19 +5,19 @@ namespace BerichtsheftBuilder.dto
     [Serializable()]
     public class TaskDto
     {
-        private DateUtils.CalendarWeek calendarWeek;
+        protected DateUtils.CalendarWeek calendarWeek;
         public DateUtils.CalendarWeek CalendarWeek
         {
             get => calendarWeek;
         }
 
-        private string desc;
+        protected string desc;
         public string Desc
         {
             get => desc;
         }
 
-        private bool isSchool;
+        protected bool isSchool;
         public bool IsSchool
         {
             get => isSchool;
