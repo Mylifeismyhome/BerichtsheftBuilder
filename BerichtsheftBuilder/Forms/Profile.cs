@@ -25,6 +25,7 @@ namespace BerichtsheftBuilder.Forms
         public Profile()
         {
             InitializeComponent();
+            IsEnabledChanged();
             isModifyMode = false;
         }
 
@@ -35,6 +36,12 @@ namespace BerichtsheftBuilder.Forms
             DTP_Ausbildungsstart.Value = profileStorage.Ausbildungsstart;
             DTP_Ausbildungsende.Value = profileStorage.Ausbildungsend;
             TB_Ausbildungsabteilung.Text = profileStorage.Ausbildungsabteilung;
+
+            CB_IsEnabled.Checked = profileStorage.Sftp.IsEnabled;
+            TB_Host.Text = profileStorage.Sftp.Host;
+            NUD_Port.Value = profileStorage.Sftp.Port;
+            TB_Username.Text = profileStorage.Sftp.Username;
+            TB_Password.Text = profileStorage.Sftp.Password;
         }
 
         private void switchToMainForm()
@@ -73,6 +80,19 @@ namespace BerichtsheftBuilder.Forms
             {
                 switchToMainForm();
             }
+        }
+
+        private void IsEnabledChanged()
+        {
+            TB_Host.Enabled = CB_IsEnabled.Checked;
+            NUD_Port.Enabled = CB_IsEnabled.Checked;
+            TB_Username.Enabled = CB_IsEnabled.Checked;
+            TB_Password.Enabled = CB_IsEnabled.Checked;
+        }
+
+        private void CB_IsEnabled_CheckedChanged(object sender, EventArgs e)
+        {
+            IsEnabledChanged();
         }
     }
 }

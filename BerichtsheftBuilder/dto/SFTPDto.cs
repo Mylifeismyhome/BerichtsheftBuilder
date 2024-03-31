@@ -9,6 +9,12 @@ namespace BerichtsheftBuilder.dto
     [Serializable()]
     public class SFTPDto
     {
+        private bool isEnabled;
+        public bool IsEnabled
+        {
+            get => isEnabled;
+        }
+
         private string host;
         public string Host
         {
