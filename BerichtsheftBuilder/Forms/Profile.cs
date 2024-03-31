@@ -59,7 +59,6 @@ namespace BerichtsheftBuilder.Forms
             profileStorage.Ausbildungsend = DTP_Ausbildungsende.Value;
             profileStorage.Ausbildungsabteilung = TB_Ausbildungsabteilung.Text;
 
-            profileStorage.Created = true;
             if (!profileStorage.Save())
             {
                 return;

@@ -1,6 +1,4 @@
-﻿using BerichtsheftBuilder.dto;
-using BerichtsheftBuilder.Forms;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -15,7 +13,7 @@ namespace BerichtsheftBuilder
 
         private List<DateUtils.CalendarWeek> calendarWeekList;
 
-        private List<TaskDTO> calendarWeekTaskListView;
+        private List<dto.TaskDto> calendarWeekTaskListView;
 
         public MainForm()
         {
@@ -70,7 +68,7 @@ namespace BerichtsheftBuilder
 
             RTB_Task.Text = "";
 
-            foreach (TaskDTO task in calendarWeekTaskListView)
+            foreach (dto.TaskDto task in calendarWeekTaskListView)
             {
                 if(task.IsSchool)
                 {
@@ -82,7 +80,7 @@ namespace BerichtsheftBuilder
 
             RTB_SchoolTask.Text = "";
 
-            foreach (TaskDTO task in calendarWeekTaskListView)
+            foreach (dto.TaskDto task in calendarWeekTaskListView)
             {
                 if (!task.IsSchool)
                 {
@@ -114,7 +112,7 @@ namespace BerichtsheftBuilder
 
         private void BTN_Modify_Click(object sender, EventArgs e)
         {
-            Profile profile = new Profile();
+            Forms.Profile profile = new Forms.Profile();
             profile.applyProfile();
             profile.IsModifyMode = true;
             DialogResult result = profile.ShowDialog();
@@ -141,7 +139,7 @@ namespace BerichtsheftBuilder
 
             foreach (string taskDesc in taskDescList)
             {
-                TaskDTO taskDto = TaskDTO.valueOf(calendarWeek, taskDesc, false);
+                dto.TaskDto taskDto = dto.TaskDto.valueOf(calendarWeek, taskDesc, false);
                 profileStorage.TaskList.Add(taskDto);
             }
 
@@ -160,7 +158,7 @@ namespace BerichtsheftBuilder
 
             foreach (string taskDesc in taskDescList)
             {
-                TaskDTO taskDto = TaskDTO.valueOf(calendarWeek, taskDesc, true);
+                dto.TaskDto taskDto = dto.TaskDto.valueOf(calendarWeek, taskDesc, true);
                 profileStorage.TaskList.Add(taskDto);
             }
 

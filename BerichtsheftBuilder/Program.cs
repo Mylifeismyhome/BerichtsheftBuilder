@@ -45,7 +45,7 @@ namespace BerichtsheftBuilder
             }
             else
             {
-                startupForm = profileStorage.Created ? new MainForm() : new Profile();
+                startupForm = new MainForm();
             }
 
             Application.EnableVisualStyles();

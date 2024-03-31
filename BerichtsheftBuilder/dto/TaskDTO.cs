@@ -3,7 +3,7 @@
 namespace BerichtsheftBuilder.dto
 {
     [Serializable()]
-    public class TaskDTO 
+    public class TaskDto
     {
         private DateUtils.CalendarWeek calendarWeek;
         public DateUtils.CalendarWeek CalendarWeek
@@ -23,16 +23,16 @@ namespace BerichtsheftBuilder.dto
             get => isSchool;
         }
 
-        protected TaskDTO()
+        protected TaskDto()
         {
             calendarWeek = null;
             desc = "";
             isSchool = false;
         }
 
-        public static TaskDTO valueOf(DateUtils.CalendarWeek calendarWeek, string desc, bool isSchool)
+        public static TaskDto valueOf(DateUtils.CalendarWeek calendarWeek, string desc, bool isSchool)
         {
-            TaskDTO dto = new TaskDTO();
+            TaskDto dto = new TaskDto();
             dto.calendarWeek = calendarWeek;
             dto.desc = desc;
             dto.isSchool = isSchool;

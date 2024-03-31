@@ -167,7 +167,7 @@ namespace BerichtsheftBuilder
                                                     .FontColor("#212529");
                                               });
 
-                                          List<dto.TaskDTO> taskList = profileStorage.TaskList.FindAll(it => it.CalendarWeek.Match(kalenderwoche));
+                                          List<dto.TaskDto> taskList = profileStorage.TaskList.FindAll(it => it.CalendarWeek.Match(kalenderwoche));
                                           
                                           taskList.RemoveAll(it => it.IsSchool);
 
@@ -199,7 +199,7 @@ namespace BerichtsheftBuilder
                                                     .FontColor("#212529");
                                               });
 
-                                          List<dto.TaskDTO> taskList = profileStorage.TaskList.FindAll(it => it.CalendarWeek.Match(kalenderwoche));
+                                          List<dto.TaskDto> taskList = profileStorage.TaskList.FindAll(it => it.CalendarWeek.Match(kalenderwoche));
 
                                           taskList.RemoveAll(it => !it.IsSchool);
 

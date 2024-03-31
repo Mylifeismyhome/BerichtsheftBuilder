@@ -5,16 +5,16 @@ using System.Runtime.Serialization;
 using System.Windows.Forms;
 using BerichtsheftBuilder.dto;
 using System.Collections.Generic;
+using static System.Net.WebRequestMethods;
 
 namespace BerichtsheftBuilder
 {
     public class ProfileStorage
     {
-        private bool created;
-        public bool Created
+        private ushort version;
+        public ushort Version
         {
-            get => created;
-            set => created = value;
+            get => version;
         }
 
         private string name;
@@ -52,11 +52,17 @@ namespace BerichtsheftBuilder
             set => ausbildungsabteilung = value;
         }
 
-        private List<TaskDTO> taskList;
-        public List<TaskDTO> TaskList
+        private List<TaskDto> taskList;
+        public List<TaskDto> TaskList
         {
             get => taskList;
             set => taskList = value;
+        }
+
+        private SFTPDto sftp;
+        public SFTPDto Sftp
+        {
+            get => sftp;
         }
 
         public delegate void OnReadDelegate();
@@ -69,12 +75,15 @@ namespace BerichtsheftBuilder
 
         public ProfileStorage()
         {
-            created = false;
+            version = 1;
+            sftp = new SFTPDto();
+
             name = "";
             ausbilderName = "";
             ausbildungsstart = new DateTime();
             ausbildungsend = new DateTime();
-            taskList = new List<TaskDTO>();
+            taskList = new List<TaskDto>();
+
             onRead = new OnReadDelegate(() => { });
         }
 
@@ -109,7 +118,7 @@ namespace BerichtsheftBuilder
         {
             try
             {
-                FileStream stream = File.Open("profile.bin", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                FileStream stream = System.IO.File.Open("profile.bin", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
                 if (stream == null)
                 {
                     return false;
@@ -123,7 +132,9 @@ namespace BerichtsheftBuilder
 
                 IFormatter formatter = new BinaryFormatter();
 
-                BinaryWriter(formatter, stream, created);
+                BinaryWriter(formatter, stream, version);
+                BinaryWriter(formatter, stream, sftp);
+
                 BinaryWriter(formatter, stream, name);
                 BinaryWriter(formatter, stream, ausbilderName);
                 BinaryWriter(formatter, stream, ausbildungsstart);
@@ -146,7 +157,7 @@ namespace BerichtsheftBuilder
         {
             try
             {
-                FileStream stream = File.Open("profile.bin", FileMode.OpenOrCreate, FileAccess.Read, FileShare.None);
+                FileStream stream = System.IO.File.Open("profile.bin", FileMode.OpenOrCreate, FileAccess.Read, FileShare.None);
                 if (stream == null)
                 {
                     return false;
@@ -166,13 +177,15 @@ namespace BerichtsheftBuilder
 
                 IFormatter formatter = new BinaryFormatter();
 
-                created = (bool)BinaryRead(formatter, stream);
+                version = (ushort)BinaryRead(formatter, stream);
+                sftp = (SFTPDto)BinaryRead(formatter, stream);
+
                 name = (string)BinaryRead(formatter, stream);
                 ausbilderName = (string)BinaryRead(formatter, stream);
                 ausbildungsstart = (DateTime)BinaryRead(formatter, stream);
                 ausbildungsend = (DateTime)BinaryRead(formatter, stream);
                 ausbildungsabteilung = (string)BinaryRead(formatter, stream);
-                taskList = (List<TaskDTO>)BinaryRead(formatter, stream);
+                taskList = (List<TaskDto>)BinaryRead(formatter, stream);
 
                 stream.Close();
                 onRead.Invoke();
