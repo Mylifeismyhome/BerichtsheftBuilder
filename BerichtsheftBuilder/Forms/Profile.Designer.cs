@@ -36,13 +36,12 @@
             TB_AuszubildenderName = new System.Windows.Forms.TextBox();
             TB_AusbilderName = new System.Windows.Forms.TextBox();
             LB_AusbilderName = new System.Windows.Forms.Label();
-            BTN_Save = new System.Windows.Forms.Button();
+            BTN_Apply = new System.Windows.Forms.Button();
             LB_Ausbildungsabteilung = new System.Windows.Forms.Label();
             TB_Ausbildungsabteilung = new System.Windows.Forms.TextBox();
             TBC_Profile = new System.Windows.Forms.TabControl();
             TP_General = new System.Windows.Forms.TabPage();
             TP_SFTP = new System.Windows.Forms.TabPage();
-            BTN_Sync = new System.Windows.Forms.Button();
             NUD_Port = new System.Windows.Forms.NumericUpDown();
             LB_Password = new System.Windows.Forms.Label();
             TB_Password = new System.Windows.Forms.TextBox();
@@ -135,17 +134,17 @@
             LB_AusbilderName.TabIndex = 7;
             LB_AusbilderName.Text = "Ausbilder Name:";
             // 
-            // BTN_Save
+            // BTN_Apply
             // 
-            BTN_Save.Cursor = System.Windows.Forms.Cursors.Hand;
-            BTN_Save.Location = new System.Drawing.Point(7, 220);
-            BTN_Save.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            BTN_Save.Name = "BTN_Save";
-            BTN_Save.Size = new System.Drawing.Size(438, 50);
-            BTN_Save.TabIndex = 8;
-            BTN_Save.Text = "Speichern";
-            BTN_Save.UseVisualStyleBackColor = true;
-            BTN_Save.Click += BTN_Save_Click;
+            BTN_Apply.Cursor = System.Windows.Forms.Cursors.Hand;
+            BTN_Apply.Location = new System.Drawing.Point(12, 249);
+            BTN_Apply.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            BTN_Apply.Name = "BTN_Apply";
+            BTN_Apply.Size = new System.Drawing.Size(460, 54);
+            BTN_Apply.TabIndex = 8;
+            BTN_Apply.Text = "Übernehmen";
+            BTN_Apply.UseVisualStyleBackColor = true;
+            BTN_Apply.Click += BTN_Apply_Click;
             // 
             // LB_Ausbildungsabteilung
             // 
@@ -173,13 +172,12 @@
             TBC_Profile.Location = new System.Drawing.Point(12, 13);
             TBC_Profile.Name = "TBC_Profile";
             TBC_Profile.SelectedIndex = 0;
-            TBC_Profile.Size = new System.Drawing.Size(460, 306);
+            TBC_Profile.Size = new System.Drawing.Size(460, 230);
             TBC_Profile.TabIndex = 11;
             // 
             // TP_General
             // 
             TP_General.Controls.Add(TB_AuszubildenderName);
-            TP_General.Controls.Add(BTN_Save);
             TP_General.Controls.Add(TB_Ausbildungsabteilung);
             TP_General.Controls.Add(DTP_Ausbildungsstart);
             TP_General.Controls.Add(LB_Ausbildungsabteilung);
@@ -192,14 +190,13 @@
             TP_General.Location = new System.Drawing.Point(4, 25);
             TP_General.Name = "TP_General";
             TP_General.Padding = new System.Windows.Forms.Padding(3);
-            TP_General.Size = new System.Drawing.Size(452, 277);
+            TP_General.Size = new System.Drawing.Size(452, 201);
             TP_General.TabIndex = 0;
             TP_General.Text = "Allgemein";
             TP_General.UseVisualStyleBackColor = true;
             // 
             // TP_SFTP
             // 
-            TP_SFTP.Controls.Add(BTN_Sync);
             TP_SFTP.Controls.Add(NUD_Port);
             TP_SFTP.Controls.Add(LB_Password);
             TP_SFTP.Controls.Add(TB_Password);
@@ -210,25 +207,13 @@
             TP_SFTP.Controls.Add(LB_Host);
             TP_SFTP.Controls.Add(TB_Host);
             TP_SFTP.Controls.Add(LB_IsEnabled);
-            TP_SFTP.Location = new System.Drawing.Point(4, 25);
+            TP_SFTP.Location = new System.Drawing.Point(4, 24);
             TP_SFTP.Name = "TP_SFTP";
             TP_SFTP.Padding = new System.Windows.Forms.Padding(3);
-            TP_SFTP.Size = new System.Drawing.Size(452, 277);
+            TP_SFTP.Size = new System.Drawing.Size(452, 202);
             TP_SFTP.TabIndex = 1;
             TP_SFTP.Text = "SFTP";
             TP_SFTP.UseVisualStyleBackColor = true;
-            // 
-            // BTN_Sync
-            // 
-            BTN_Sync.Cursor = System.Windows.Forms.Cursors.Hand;
-            BTN_Sync.Location = new System.Drawing.Point(7, 220);
-            BTN_Sync.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            BTN_Sync.Name = "BTN_Sync";
-            BTN_Sync.Size = new System.Drawing.Size(438, 50);
-            BTN_Sync.TabIndex = 17;
-            BTN_Sync.Text = "Synchronisieren";
-            BTN_Sync.UseVisualStyleBackColor = true;
-            BTN_Sync.Click += BTN_Sync_Click;
             // 
             // NUD_Port
             // 
@@ -329,8 +314,9 @@
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(484, 332);
+            ClientSize = new System.Drawing.Size(484, 311);
             Controls.Add(TBC_Profile);
+            Controls.Add(BTN_Apply);
             Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -355,7 +341,7 @@
         private System.Windows.Forms.TextBox TB_AuszubildenderName;
         private System.Windows.Forms.TextBox TB_AusbilderName;
         private System.Windows.Forms.Label LB_AusbilderName;
-        private System.Windows.Forms.Button BTN_Save;
+        private System.Windows.Forms.Button BTN_Apply;
         private System.Windows.Forms.Label LB_Ausbildungsabteilung;
         private System.Windows.Forms.TextBox TB_Ausbildungsabteilung;
         private System.Windows.Forms.TabControl TBC_Profile;
@@ -371,6 +357,5 @@
         private System.Windows.Forms.Label LB_Username;
         private System.Windows.Forms.TextBox TB_Username;
         private System.Windows.Forms.Label LB_Port;
-        private System.Windows.Forms.Button BTN_Sync;
     }
 }

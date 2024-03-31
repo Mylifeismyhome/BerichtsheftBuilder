@@ -29,6 +29,14 @@ namespace BerichtsheftBuilder.Forms
             isModifyMode = false;
         }
 
+        private void switchToMainForm()
+        {
+            MainForm mainForm = new MainForm();
+            mainForm.Location = Location;
+            mainForm.Show();
+            Hide();
+        }
+
         public void applyProfile()
         {
             TB_AuszubildenderName.Text = profileStorage.Name;
@@ -44,44 +52,6 @@ namespace BerichtsheftBuilder.Forms
             TB_Password.Text = profileStorage.Sftp.Password;
         }
 
-        private void switchToMainForm()
-        {
-            MainForm mainForm = new MainForm();
-            mainForm.Location = Location;
-            mainForm.Show();
-            Hide();
-        }
-
-        private void BTN_Save_Click(object sender, EventArgs e)
-        {
-            DialogResult result = MessageBox.Show("Sind alle Daten korrekt?", "Frage", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (result == DialogResult.No)
-            {
-                return;
-            }
-
-            profileStorage.Name = TB_AuszubildenderName.Text;
-            profileStorage.AusbilderName = TB_AusbilderName.Text;
-            profileStorage.Ausbildungsstart = DTP_Ausbildungsstart.Value;
-            profileStorage.Ausbildungsend = DTP_Ausbildungsende.Value;
-            profileStorage.Ausbildungsabteilung = TB_Ausbildungsabteilung.Text;
-
-            if (!profileStorage.Save())
-            {
-                return;
-            }
-
-            if (isModifyMode)
-            {
-                DialogResult = DialogResult.OK;
-                Dispose();
-            }
-            else
-            {
-                switchToMainForm();
-            }
-        }
-
         private void IsEnabledChanged()
         {
             TB_Host.Enabled = CB_IsEnabled.Checked;
@@ -95,13 +65,24 @@ namespace BerichtsheftBuilder.Forms
             IsEnabledChanged();
         }
 
-        private void BTN_Sync_Click(object sender, EventArgs e)
+        private void BTN_Apply_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Sind alle Daten korrekt?", "Frage", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult result;
+            using (DialogCenteringService centeringService = new DialogCenteringService(this)) // center message box
+            {
+                result = MessageBox.Show(this, "Alle Eingaben korrekt?", "Frage", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            }
+
             if (result == DialogResult.No)
             {
                 return;
             }
+
+            profileStorage.Name = TB_AuszubildenderName.Text;
+            profileStorage.AusbilderName = TB_AusbilderName.Text;
+            profileStorage.Ausbildungsstart = DTP_Ausbildungsstart.Value;
+            profileStorage.Ausbildungsend = DTP_Ausbildungsende.Value;
+            profileStorage.Ausbildungsabteilung = TB_Ausbildungsabteilung.Text;
 
             profileStorage.Sftp.IsEnabled = CB_IsEnabled.Checked;
             profileStorage.Sftp.Host = TB_Host.Text;
@@ -113,8 +94,6 @@ namespace BerichtsheftBuilder.Forms
             {
                 return;
             }
-
-            profileStorage.SFTPSync();
 
             if (isModifyMode)
             {

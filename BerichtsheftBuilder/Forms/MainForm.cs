@@ -115,6 +115,7 @@ namespace BerichtsheftBuilder
             Forms.Profile profile = new Forms.Profile();
             profile.applyProfile();
             profile.IsModifyMode = true;
+            profile.StartPosition = FormStartPosition.CenterParent;
             DialogResult result = profile.ShowDialog();
             if (result == DialogResult.OK)
             {
