@@ -226,8 +226,9 @@
             BTN_Sync.Name = "BTN_Sync";
             BTN_Sync.Size = new System.Drawing.Size(438, 50);
             BTN_Sync.TabIndex = 17;
-            BTN_Sync.Text = "Synchronisiere";
+            BTN_Sync.Text = "Synchronisieren";
             BTN_Sync.UseVisualStyleBackColor = true;
+            BTN_Sync.Click += BTN_Sync_Click;
             // 
             // NUD_Port
             // 

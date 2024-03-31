@@ -94,5 +94,37 @@ namespace BerichtsheftBuilder.Forms
         {
             IsEnabledChanged();
         }
+
+        private void BTN_Sync_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Sind alle Daten korrekt?", "Frage", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.No)
+            {
+                return;
+            }
+
+            profileStorage.Sftp.IsEnabled = CB_IsEnabled.Checked;
+            profileStorage.Sftp.Host = TB_Host.Text;
+            profileStorage.Sftp.Port = Convert.ToInt32(NUD_Port.Value);
+            profileStorage.Sftp.Username = TB_Username.Text;
+            profileStorage.Sftp.Password = TB_Password.Text;
+
+            if (!profileStorage.Save())
+            {
+                return;
+            }
+
+            profileStorage.SFTPSync();
+
+            if (isModifyMode)
+            {
+                DialogResult = DialogResult.OK;
+                Dispose();
+            }
+            else
+            {
+                switchToMainForm();
+            }
+        }
     }
 }
