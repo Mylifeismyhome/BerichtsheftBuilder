@@ -1,4 +1,5 @@
-# Berichtsheft Build - Ein angenehmer Workflow für die Ausbildungszeit
+# Berichtsheft Builder
+### Ein angenehmer Workflow für die Ausbildungszeit
 
 Autor: Tobias Staack
 
