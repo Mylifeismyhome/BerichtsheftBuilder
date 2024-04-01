@@ -19,6 +19,7 @@ Das Führen eines Berichtsheftes wird oft als mühsam und zeitaufwendig empfunde
 
 - **Benutzerfreundliche Oberfläche:** Eine intuitive Benutzeroberfläche macht das Erfassen von Einträgen im Berichtsheft einfach und effizient.
 - **Export in PDF:** Das Berichtsheft kann in eine PDF-Datei exportiert werden, die nach dem Muster der IHK erstellt wird.
+- **SFTP** SFTP-Unterstützung, um das gespeicherte Profil zwischen dem PC am Arbeitsplatz und dem PC zu Hause auszutauschen.
 - **Anpassbarkeit:** Benutzer können das Layout und die Struktur ihres Berichtshefts an ihre individuellen Bedürfnisse anpassen.
 - **Effizienz:** Die vereinfachten Prozesse erhöhen die Effizienz bei der Führung des Berichtsheftes.
 - **Motivation:** Ein angenehmer Workflow motiviert die Auszubildenden, ihr Berichtsheft regelmäßig zu führen.
