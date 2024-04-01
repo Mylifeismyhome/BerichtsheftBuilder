@@ -1,5 +1,7 @@
-# Berichtsheft Builder
-### Ein angenehmer Workflow für die Ausbildungszeit
+<span style="font-size:1em;">Berichtsheft Builder</span>
+<br/>
+<span style="font-size:0.5em;">Ein angenehmer Workflow für die Ausbildungszeit</span>
+======
 
 Autor: Tobias Staack
 
