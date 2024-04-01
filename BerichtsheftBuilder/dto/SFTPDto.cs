@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
-namespace BerichtsheftBuilder.dto
+namespace BerichtsheftBuilder.Dto
 {
     [Serializable()]
     public class SFTPDto
@@ -50,6 +47,16 @@ namespace BerichtsheftBuilder.dto
             port = 22;
             username = "";
             password = "";
+        }
+
+        [JsonConstructor]
+        public SFTPDto(bool isEnabled, string host, int port, string username, string password)
+        {
+            this.isEnabled = isEnabled;
+            this.host = host;
+            this.port = port;
+            this.username = username;
+            this.password = password;
         }
     }
 }

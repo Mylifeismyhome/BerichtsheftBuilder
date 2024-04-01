@@ -1,17 +1,20 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization;
 using System.Windows.Forms;
-using BerichtsheftBuilder.dto;
-using System.Collections.Generic;
 using Renci.SshNet;
-using System.Linq;
+using System.Text;
+using BerichtsheftBuilder.Dto;
 
 namespace BerichtsheftBuilder.service
 {
     public class ProfileService
     {
+        private string fileName;
+        public string FileName
+        {
+            get => fileName;
+        }
+
         private ProfileDto profile;
         public ProfileDto Profile
         {
@@ -28,6 +31,7 @@ namespace BerichtsheftBuilder.service
 
         public ProfileService()
         {
+            fileName = "profile.json";
             profile = new ProfileDto();
             onRead = new OnReadDelegate(() => { });
         }
@@ -36,16 +40,15 @@ namespace BerichtsheftBuilder.service
         {
             try
             {
-                using (FileStream stream = File.Open("profile.bin", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+                using (FileStream stream = File.Open(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
                 {
                     if (stream == null || !stream.CanWrite)
                     {
                         return false;
                     }
 
-                    profile.writeToStream(stream);
-
-                    return true;
+                    byte[] utf8 = profile.serializeUtf8();
+                    stream.Write(utf8, 0, utf8.Length);
                 }
             }
             catch (Exception ex)
@@ -53,22 +56,29 @@ namespace BerichtsheftBuilder.service
                 MessageBox.Show(ex.Message);
                 return false;
             }
+
+            return SFTPSync();
         }
 
         public bool Read()
         {
             try
             {
-                using (FileStream stream = File.Open("profile.bin", FileMode.OpenOrCreate, FileAccess.Read, FileShare.None))
+                using (FileStream stream = File.Open(fileName, FileMode.OpenOrCreate, FileAccess.Read, FileShare.None))
                 {
                     if (stream == null || !stream.CanRead || stream.Length == 0)
                     {
                         return false;
                     }
 
-                    IFormatter formatter = new BinaryFormatter();
-                    profile.readFromStream(stream);
+                    byte[] data = new byte[stream.Length];
+                    stream.Read(data, 0, data.Length);
+
+                    string utf8 = Encoding.UTF8.GetString(data, 0, data.Length);
+                    profile.deserializeUtf8(utf8);
+
                     onRead.Invoke();
+
                     return true;
                 }
             }
@@ -79,8 +89,13 @@ namespace BerichtsheftBuilder.service
             }
         }
 
-        public void SFTPSync()
+        public bool SFTPSync()
         {
+            if(!profile.Sftp.IsEnabled)
+            {
+                return true;
+            }
+
             using (MemoryStream memoryStream = new MemoryStream())
             {
                 SftpClient client = new SftpClient(profile.Sftp.Host, profile.Sftp.Port, profile.Sftp.Username, profile.Sftp.Password);
@@ -94,40 +109,40 @@ namespace BerichtsheftBuilder.service
                         throw new Exception("Not connected to SFTP server");
                     }
 
-                    bool fileExists = client.Exists("profile.bin");
+                    bool fileExists = client.Exists(fileName);
 
                     if (!fileExists)
                     {
-                        profile.writeToStream(memoryStream);
-                        client.WriteAllBytes("profile.bin", memoryStream.ToArray());
-                        return;
+                        byte[] utf8 = profile.serializeUtf8();
+                        client.WriteAllBytes(fileName, utf8);
+                        return true;
                     }
 
-                    byte[] data = client.ReadAllBytes("profile.bin");
-                    memoryStream.Write(data, 0, data.Length);
-                    memoryStream.Position = 0;
+                    //byte[] data = client.ReadAllBytes("profile.bin");
+                    //memoryStream.Write(data, 0, data.Length);
+                    //memoryStream.Position = 0;
 
-                    ProfileDto tempProfile = new ProfileDto();
-                    tempProfile.readFromStream(memoryStream);
+                    //ProfileDto tempProfile = new ProfileDto();
+                    //tempProfile.readFromStream(memoryStream);
 
-                    if (profile.Version != tempProfile.Version)
-                    {
-                        throw new Exception("Version mismatch");
-                    }
+                    //if (profile.Version != tempProfile.Version)
+                    //{
+                    //    throw new Exception("Version mismatch");
+                    //}
 
-                    profile.Name = tempProfile.Name;
-                    profile.AusbilderName = tempProfile.AusbilderName;
-                    profile.Ausbildungsstart = tempProfile.Ausbildungsstart;
-                    profile.Ausbildungsend = tempProfile.Ausbildungsend;
-                    profile.Ausbildungsabteilung = tempProfile.Ausbildungsabteilung;
-                    profile.TaskList = profile.TaskList.Union(tempProfile.TaskList).ToList();
+                    //profile.Name = tempProfile.Name;
+                    //profile.AusbilderName = tempProfile.AusbilderName;
+                    //profile.Ausbildungsstart = tempProfile.Ausbildungsstart;
+                    //profile.Ausbildungsend = tempProfile.Ausbildungsend;
+                    //profile.Ausbildungsabteilung = tempProfile.Ausbildungsabteilung;
+                    //profile.TaskList = profile.TaskList.Union(tempProfile.TaskList).ToList();
 
-                    memoryStream.Flush();
-                    memoryStream.Position = 0;
+                    //memoryStream.Flush();
+                    //memoryStream.Position = 0;
 
-                    profile.writeToStream(memoryStream);
+                    //profile.writeToStream(memoryStream);
 
-                    client.WriteAllBytes("profile.bin", memoryStream.ToArray());
+                    //client.WriteAllBytes("profile.bin", memoryStream.ToArray());
                 }
                 catch (Exception exception)
                 {
@@ -140,6 +155,8 @@ namespace BerichtsheftBuilder.service
                     memoryStream.Close();
                 }
             }
+
+            return false;
         }
     }
 }

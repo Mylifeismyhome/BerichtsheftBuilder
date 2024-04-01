@@ -1,15 +1,15 @@
 ﻿using System;
-using BerichtsheftBuilder.Dto;
+using System.Text.Json.Serialization;
 
-namespace BerichtsheftBuilder.dto
+namespace BerichtsheftBuilder.Dto
 {
     [Serializable()]
     public class TaskDto
     {
-        protected DateDto.CalendarWeek calendarWeek;
-        public DateDto.CalendarWeek CalendarWeek
+        protected DateDto date;
+        public DateDto Date
         {
-            get => calendarWeek;
+            get => date;
         }
 
         protected string desc;
@@ -24,20 +24,12 @@ namespace BerichtsheftBuilder.dto
             get => isSchool;
         }
 
-        protected TaskDto()
+        [JsonConstructor]
+        public TaskDto(DateDto date, string desc, bool isSchool)
         {
-            calendarWeek = null;
-            desc = "";
-            isSchool = false;
-        }
-
-        public static TaskDto valueOf(DateDto.CalendarWeek calendarWeek, string desc, bool isSchool)
-        {
-            TaskDto dto = new TaskDto();
-            dto.calendarWeek = calendarWeek;
-            dto.desc = desc;
-            dto.isSchool = isSchool;
-            return dto;
+            this.date = date;
+            this.desc = desc;
+            this.isSchool = isSchool;
         }
     }
 }

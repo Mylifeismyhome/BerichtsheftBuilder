@@ -1,15 +1,9 @@
-﻿using BerichtsheftBuilder.Forms;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
-namespace BerichtsheftBuilder.dto
+namespace BerichtsheftBuilder.Dto
 {
     [Serializable]
     public class ProfileDto
@@ -79,57 +73,48 @@ namespace BerichtsheftBuilder.dto
             ausbilderName = "";
             ausbildungsstart = new DateTime();
             ausbildungsend = new DateTime();
+            ausbildungsabteilung = "";
             taskList = new List<TaskDto>();
         }
 
-        protected void BinaryWriter(IFormatter formatter, Stream stream, object obj)
+        [JsonConstructor]
+        public ProfileDto(ushort version, string name, string ausbilderName, DateTime ausbildungsstart, DateTime ausbildungsend, string ausbildungsabteilung, List<TaskDto> taskList)
         {
-            if (formatter == null || stream == null)
+            this.version = version;
+            this.name = name;
+            this.ausbilderName = ausbilderName;
+            this.ausbildungsstart = ausbildungsstart;
+            this.ausbildungsend = ausbildungsend;
+            this.ausbildungsabteilung = ausbildungsabteilung;
+            this.taskList = taskList;
+        }
+
+        public byte[] serializeUtf8()
+        {
+            return JsonSerializer.SerializeToUtf8Bytes(this);
+        }
+
+        public void deserializeUtf8(string utf8)
+        {
+            ProfileDto? profile = JsonSerializer.Deserialize<ProfileDto>(utf8);
+
+            if (profile == null)
             {
-                return;
+                throw new Exception("unable to deserialize profile");
             }
 
-            formatter.Serialize(stream, obj);
-        }
-
-        protected object BinaryRead(IFormatter formatter, Stream stream)
-        {
-            if (formatter == null || stream == null)
+            if (version != profile.version)
             {
-                return null;
+                throw new Exception("version mismatch");
             }
 
-            return formatter.Deserialize(stream);
-        }
-
-        public void writeToStream(Stream stream)
-        {
-            IFormatter formatter = new BinaryFormatter();
-
-            BinaryWriter(formatter, stream, version);
-            BinaryWriter(formatter, stream, sftp);
-
-            BinaryWriter(formatter, stream, name);
-            BinaryWriter(formatter, stream, ausbilderName);
-            BinaryWriter(formatter, stream, ausbildungsstart);
-            BinaryWriter(formatter, stream, ausbildungsend);
-            BinaryWriter(formatter, stream, ausbildungsabteilung);
-            BinaryWriter(formatter, stream, taskList);
-        }
-
-        public void readFromStream(Stream stream)
-        {
-            IFormatter formatter = new BinaryFormatter();
-
-            version = (ushort)BinaryRead(formatter, stream);
-            sftp = (SFTPDto)BinaryRead(formatter, stream);
-
-            name = (string)BinaryRead(formatter, stream);
-            ausbilderName = (string)BinaryRead(formatter, stream);
-            ausbildungsstart = (DateTime)BinaryRead(formatter, stream);
-            ausbildungsend = (DateTime)BinaryRead(formatter, stream);
-            ausbildungsabteilung = (string)BinaryRead(formatter, stream);
-            taskList = (List<TaskDto>)BinaryRead(formatter, stream);
+            sftp = profile.sftp;
+            name = profile.name;
+            ausbilderName = profile.ausbilderName;
+            ausbildungsstart = profile.ausbildungsstart;
+            Ausbildungsend = profile.ausbildungsend;
+            ausbildungsabteilung = profile.ausbildungsabteilung;
+            taskList = profile.taskList;
         }
     }
 }

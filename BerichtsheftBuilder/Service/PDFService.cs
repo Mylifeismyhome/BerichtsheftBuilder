@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using BerichtsheftBuilder.dto;
 using BerichtsheftBuilder.Dto;
 using BerichtsheftBuilder.service;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +23,7 @@ namespace BerichtsheftBuilder.Service
                 DateTime yearEnd = tmpAusbildungsstart.AddYears(1);
                 while (tmpAusbildungsstart.CompareTo(profile.Ausbildungsend) <= 0)
                 {
-                    DateDto.CalendarWeek kalenderwoche = DateDto.GetCalendarWeek(tmpAusbildungsstart);
+                    DateDto kalenderwoche = DateDto.GetCalendarWeek(tmpAusbildungsstart);
 
                     if (kalenderwoche.WeekStartDate.CompareTo(profile.Ausbildungsstart) < 0)
                     {
@@ -175,7 +174,7 @@ namespace BerichtsheftBuilder.Service
                                                     .FontColor("#212529");
                                               });
 
-                                          List<TaskDto> taskList = profile.TaskList.FindAll(it => it.CalendarWeek.Match(kalenderwoche));
+                                          List<TaskDto> taskList = profile.TaskList.FindAll(it => it.Date.Match(kalenderwoche));
 
                                           taskList.RemoveAll(it => it.IsSchool);
 
@@ -207,7 +206,7 @@ namespace BerichtsheftBuilder.Service
                                                     .FontColor("#212529");
                                               });
 
-                                          List<TaskDto> taskList = profile.TaskList.FindAll(it => it.CalendarWeek.Match(kalenderwoche));
+                                          List<TaskDto> taskList = profile.TaskList.FindAll(it => it.Date.Match(kalenderwoche));
 
                                           taskList.RemoveAll(it => !it.IsSchool);
 
