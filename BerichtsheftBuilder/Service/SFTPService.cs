@@ -1,12 +1,10 @@
-﻿using ABI.System;
-using BerichtsheftBuilder.Dto;
+﻿using BerichtsheftBuilder.Dto;
 using BerichtsheftBuilder.service;
 using Microsoft.Extensions.DependencyInjection;
 using Renci.SshNet;
 using System;
 using System.IO;
 using System.Text;
-using System.Windows.Forms;
 
 namespace BerichtsheftBuilder.Service
 {

@@ -1,7 +1,6 @@
 ﻿using BerichtsheftBuilder.Service;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Globalization;
 using System.Text.Json.Serialization;
 
 namespace BerichtsheftBuilder.Dto
