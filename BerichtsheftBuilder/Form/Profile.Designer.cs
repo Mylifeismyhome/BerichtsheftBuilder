@@ -207,10 +207,10 @@
             TP_SFTP.Controls.Add(LB_Host);
             TP_SFTP.Controls.Add(TB_Host);
             TP_SFTP.Controls.Add(LB_IsEnabled);
-            TP_SFTP.Location = new System.Drawing.Point(4, 25);
+            TP_SFTP.Location = new System.Drawing.Point(4, 24);
             TP_SFTP.Name = "TP_SFTP";
             TP_SFTP.Padding = new System.Windows.Forms.Padding(3);
-            TP_SFTP.Size = new System.Drawing.Size(452, 201);
+            TP_SFTP.Size = new System.Drawing.Size(452, 202);
             TP_SFTP.TabIndex = 1;
             TP_SFTP.Text = "SFTP";
             TP_SFTP.UseVisualStyleBackColor = true;
@@ -320,6 +320,9 @@
             Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MaximizeBox = false;
+            MdiChildrenMinimizedAnchorBottom = false;
+            MinimizeBox = false;
             Name = "Profile";
             Text = "Profile";
             TBC_Profile.ResumeLayout(false);

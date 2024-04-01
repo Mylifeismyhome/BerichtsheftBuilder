@@ -403,7 +403,11 @@ namespace BerichtsheftBuilder
             Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MaximizeBox = false;
+            MdiChildrenMinimizedAnchorBottom = false;
+            MinimizeBox = false;
             Name = "MainForm";
+            SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             Text = "Berichtsheft Builder";
             GP_Daten.ResumeLayout(false);
             GP_Daten.PerformLayout();

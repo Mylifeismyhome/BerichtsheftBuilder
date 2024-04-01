@@ -223,7 +223,7 @@ namespace BerichtsheftBuilder
             {
                 sftpService.commit();
             }
-            catch(System.Exception ex)
+            catch (System.Exception ex)
             {
                 dialogCenteringService.nextOwner(this);
                 MessageBox.Show(ex.Message, "SFTP Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -239,7 +239,7 @@ namespace BerichtsheftBuilder
             {
                 sftpService.pull();
             }
-            catch(System.Exception ex)
+            catch (System.Exception ex)
             {
                 dialogCenteringService.nextOwner(this);
                 MessageBox.Show(ex.Message, "SFTP Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
