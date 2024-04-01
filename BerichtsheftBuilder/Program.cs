@@ -1,4 +1,5 @@
-﻿using BerichtsheftBuilder.Forms;
+﻿using BerichtsheftBuilder.Form;
+using BerichtsheftBuilder.Forms;
 using BerichtsheftBuilder.service;
 using BerichtsheftBuilder.Service;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,6 +33,7 @@ namespace BerichtsheftBuilder
         private static void cdi()
         {
             serviceCollection = new ServiceCollection();
+            serviceCollection.AddSingleton<ApplicationController>();
             serviceCollection.AddSingleton<ProfileService>();
             serviceCollection.AddSingleton<SFTPService>();
             serviceCollection.AddSingleton<PDFService>();
@@ -42,21 +44,16 @@ namespace BerichtsheftBuilder
 
         private static void run()
         {
-            Form form;
-
+            ApplicationController applicationController = ServiceProvider.GetService<ApplicationController>();
             ProfileService profileService = ServiceProvider.GetService<ProfileService>();
-            if (!profileService.read())
-            {
-                form = new Profile();
-            }
-            else
-            {
-                form = new MainForm();
-            }
+
+            applicationController.PostConstruct += (controller) => {
+                controller.switchForm(profileService.read() ? new MainForm() : new Profile());
+            };
 
             Application.EnableVisualStyles();
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            Application.Run(form);
+            Application.Run(applicationController);
         }
 
         [STAThread]

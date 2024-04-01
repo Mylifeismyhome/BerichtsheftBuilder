@@ -1,4 +1,5 @@
-﻿using BerichtsheftBuilder.service;
+﻿using BerichtsheftBuilder.Form;
+using BerichtsheftBuilder.service;
 using BerichtsheftBuilder.Service;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -9,6 +10,8 @@ namespace BerichtsheftBuilder.Forms
 {
     public partial class Profile : System.Windows.Forms.Form
     {
+        private ApplicationController applicationController = Program.ServiceProvider.GetService<ApplicationController>();
+
         private ProfileService profileService = Program.ServiceProvider.GetService<ProfileService>();
 
         private SFTPService sftpService = Program.ServiceProvider.GetService<SFTPService>();
@@ -27,14 +30,6 @@ namespace BerichtsheftBuilder.Forms
             InitializeComponent();
             IsEnabledChanged();
             isModifyMode = false;
-        }
-
-        private void switchToMainForm()
-        {
-            MainForm mainForm = new MainForm();
-            mainForm.Location = Location;
-            mainForm.Show();
-            Hide();
         }
 
         public void applyProfile()
@@ -115,7 +110,7 @@ namespace BerichtsheftBuilder.Forms
             }
             else
             {
-                switchToMainForm();
+                applicationController.switchForm(new MainForm());
             }
         }
     }
