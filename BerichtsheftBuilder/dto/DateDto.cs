@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BerichtsheftBuilder.Service;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Globalization;
 using System.Text.Json.Serialization;
 
@@ -7,6 +9,9 @@ namespace BerichtsheftBuilder.Dto
     [Serializable()]
     public class DateDto
     {
+        [JsonIgnore]
+        private CultureInfoService cultureInfoService = Program.ServiceProvider.GetService<CultureInfoService>();
+
         private int year;
         public int Year
         {
@@ -19,16 +24,6 @@ namespace BerichtsheftBuilder.Dto
         {
             get => week;
             set => week = value;
-        }
-
-        [JsonIgnore]
-        private CultureInfo cultureInfo;
-
-        [JsonIgnore]
-        public CultureInfo CultureInfo
-        {
-            get => cultureInfo;
-            set => cultureInfo = value;
         }
 
         private DateTime weekStartDate;
@@ -45,12 +40,10 @@ namespace BerichtsheftBuilder.Dto
             set => weekEndDate = value;
         }
 
-        public DateDto(DateTime date, string format)
+        public DateDto(DateTime date)
         {
-            CultureInfo = new CultureInfo(format);
-
             Year = date.Year;
-            week = CultureInfo.Calendar.GetWeekOfYear(date, CultureInfo.DateTimeFormat.CalendarWeekRule, CultureInfo.DateTimeFormat.FirstDayOfWeek);
+            week = cultureInfoService.CultureInfo.Calendar.GetWeekOfYear(date, cultureInfoService.CultureInfo.DateTimeFormat.CalendarWeekRule, cultureInfoService.CultureInfo.DateTimeFormat.FirstDayOfWeek);
 
             weekStartDate = date.AddDays(-(int)date.DayOfWeek + (int)DayOfWeek.Monday);
             weekEndDate = weekStartDate.AddDays(4);
@@ -82,17 +75,17 @@ namespace BerichtsheftBuilder.Dto
 
         public string StartDateAsString()
         {
-            return weekStartDate.ToString("dd.MM.yyyy", cultureInfo);
+            return cultureInfoService.dateFormat(weekStartDate);
         }
 
         public string EndDateAsString()
         {
-            return weekEndDate.ToString("dd.MM.yyyy", cultureInfo);
+            return cultureInfoService.dateFormat(weekEndDate);
         }
 
-        public static DateDto GetCalendarWeek(DateTime date, string format = "de-DE")
+        public static DateDto GetCalendarWeek(DateTime date)
         {
-            return new DateDto(date, format);
+            return new DateDto(date);
         }
     }
 }

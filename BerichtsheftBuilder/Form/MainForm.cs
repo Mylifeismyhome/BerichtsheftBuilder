@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
+using ABI.System;
 using BerichtsheftBuilder.Dto;
 using BerichtsheftBuilder.service;
 using BerichtsheftBuilder.Service;
@@ -14,7 +15,13 @@ namespace BerichtsheftBuilder
     {
         private ProfileService profileService = Program.ServiceProvider.GetService<ProfileService>();
 
+        private SFTPService sftpService = Program.ServiceProvider.GetService<SFTPService>();
+
         private PDFService pdfService = Program.ServiceProvider.GetService<PDFService>();
+
+        private CultureInfoService cultureInfoService = Program.ServiceProvider.GetService<CultureInfoService>();
+
+        private DialogCenteringService dialogCenteringService = Program.ServiceProvider.GetService<DialogCenteringService>();
 
         private List<DateDto> dateDtoList;
 
@@ -23,19 +30,56 @@ namespace BerichtsheftBuilder
         public MainForm()
         {
             InitializeComponent();
-            applyProfile();
+            updateProfileStats();
+            updateSftpStats();
+            UpdateCalenderWeekComboBox();
+            SetComboBoxToCurrentCalenderWeek();
         }
 
-        private void applyProfile()
+        private void updateProfileStats()
         {
             TB_Name.Text = profileService.Profile.Name;
             TB_AusbilderName.Text = profileService.Profile.AusbilderName;
             DTP_Ausbildungsstart.Value = profileService.Profile.Ausbildungsstart;
             DTP_Ausbildungsende.Value = profileService.Profile.Ausbildungsend;
             TB_Ausbildungsabteilung.Text = profileService.Profile.Ausbildungsabteilung;
+        }
 
-            UpdateCalenderWeekComboBox();
-            SetComboBoxToCurrentCalenderWeek();
+        private void updateSftpStats()
+        {
+            CB_SFTP_IsEnabled.Checked = profileService.Profile.Sftp.IsEnabled;
+            TB_SFTP_Host.Text = profileService.Profile.Sftp.Host;
+            NUD_SFTP_Port.Value = profileService.Profile.Sftp.Port;
+            TB_SFTP_Username.Text = profileService.Profile.Sftp.Username;
+
+            BTN_SFTP_Pull.Enabled = profileService.Profile.Sftp.IsEnabled;
+            BTN_SFTP_Pull.Cursor = BTN_SFTP_Pull.Enabled ? Cursors.Hand : Cursors.No;
+
+            BTN_SFTP_Commit.Enabled = profileService.Profile.Sftp.IsEnabled;
+            BTN_SFTP_Commit.Cursor = BTN_SFTP_Commit.Enabled ? Cursors.Hand : Cursors.No;
+
+            if (profileService.Profile.Sftp.IsEnabled)
+            {
+                try
+                {
+                    DateTime lastPull = sftpService.getLastPull();
+                    DateTime lastCommit = sftpService.getLastCommit();
+
+                    LB_SFTP_LastPull.Text = $"Letzter Pull: {cultureInfoService.dateTimeFormat(lastPull)}";
+                    LB_SFTP_LastCommit.Text = $"Letzter Commit: {cultureInfoService.dateTimeFormat(lastCommit)}";
+                }
+                catch (System.Exception ex)
+                {
+                    dialogCenteringService.nextOwner(this);
+                    MessageBox.Show(ex.Message, "SFTP Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+            else
+            {
+                LB_SFTP_LastPull.Text = "";
+                LB_SFTP_LastCommit.Text = "";
+            }
         }
 
         private void UpdateCalenderWeekComboBox()
@@ -75,7 +119,7 @@ namespace BerichtsheftBuilder
 
             foreach (TaskDto task in taskList)
             {
-                if(task.IsSchool)
+                if (task.IsSchool)
                 {
                     continue;
                 }
@@ -124,7 +168,10 @@ namespace BerichtsheftBuilder
             DialogResult result = profile.ShowDialog();
             if (result == DialogResult.OK)
             {
-                applyProfile();
+                updateProfileStats();
+                updateSftpStats();
+                UpdateCalenderWeekComboBox();
+                SetComboBoxToCurrentCalenderWeek();
             }
         }
 
@@ -149,7 +196,7 @@ namespace BerichtsheftBuilder
                 profileService.Profile.TaskList.Add(taskDto);
             }
 
-            profileService.Save();
+            profileService.save();
         }
 
         private void RTB_SchoolTask_TextChanged(object sender, EventArgs e)
@@ -168,7 +215,42 @@ namespace BerichtsheftBuilder
                 profileService.Profile.TaskList.Add(taskDto);
             }
 
-            profileService.Save();
+            profileService.save();
+        }
+
+        private void BTN_SFTP_Commit_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                sftpService.commit();
+            }
+            catch(System.Exception ex)
+            {
+                dialogCenteringService.nextOwner(this);
+                MessageBox.Show(ex.Message, "SFTP Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            updateSftpStats();
+        }
+
+        private void BTN_SFTP_Pull_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                sftpService.pull();
+            }
+            catch(System.Exception ex)
+            {
+                dialogCenteringService.nextOwner(this);
+                MessageBox.Show(ex.Message, "SFTP Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            updateProfileStats();
+            updateSftpStats();
+            UpdateCalenderWeekComboBox();
+            SetComboBoxToCurrentCalenderWeek();
         }
     }
 }

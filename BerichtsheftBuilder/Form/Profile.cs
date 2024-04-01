@@ -2,13 +2,7 @@
 using BerichtsheftBuilder.Service;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Windows.Forms;
 
 namespace BerichtsheftBuilder.Forms
@@ -16,6 +10,8 @@ namespace BerichtsheftBuilder.Forms
     public partial class Profile : System.Windows.Forms.Form
     {
         private ProfileService profileService = Program.ServiceProvider.GetService<ProfileService>();
+
+        private SFTPService sftpService = Program.ServiceProvider.GetService<SFTPService>();
 
         private DialogCenteringService dialogCenteringService = Program.ServiceProvider.GetService<DialogCenteringService>();
 
@@ -90,7 +86,24 @@ namespace BerichtsheftBuilder.Forms
             profileService.Profile.Sftp.Username = TB_Username.Text;
             profileService.Profile.Sftp.Password = TB_Password.Text;
 
-            if (!profileService.Save())
+            if (!File.Exists(profileService.FileName))
+            {
+                if (profileService.Profile.Sftp.IsEnabled)
+                {
+                    try
+                    {
+                        sftpService.pull();
+                    }
+                    catch (System.Exception ex)
+                    {
+                        dialogCenteringService.nextOwner(this);
+                        MessageBox.Show(ex.Message, "SFTP Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                }
+            }
+
+            if (!profileService.save())
             {
                 return;
             }

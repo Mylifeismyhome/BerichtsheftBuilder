@@ -33,28 +33,30 @@ namespace BerichtsheftBuilder
         {
             serviceCollection = new ServiceCollection();
             serviceCollection.AddSingleton<ProfileService>();
+            serviceCollection.AddSingleton<SFTPService>();
             serviceCollection.AddSingleton<PDFService>();
             serviceCollection.AddSingleton<DialogCenteringService>();
+            serviceCollection.AddSingleton<CultureInfoService>();
             serviceProvider = serviceCollection.BuildServiceProvider();
         }
 
-        private static void routine()
+        private static void run()
         {
-            System.Windows.Forms.Form startupForm = null;
+            Form form;
 
             ProfileService profileService = ServiceProvider.GetService<ProfileService>();
-            if (!profileService.Read())
+            if (!profileService.read())
             {
-                startupForm = new Profile();
+                form = new Profile();
             }
             else
             {
-                startupForm = new MainForm();
+                form = new MainForm();
             }
 
             Application.EnableVisualStyles();
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            Application.Run(startupForm);
+            Application.Run(form);
         }
 
         [STAThread]
@@ -62,7 +64,7 @@ namespace BerichtsheftBuilder
         {
             license();
             cdi();
-            routine();
+            run();
         }
     }
 }
