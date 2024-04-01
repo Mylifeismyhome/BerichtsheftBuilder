@@ -1,5 +1,6 @@
 ﻿using BerichtsheftBuilder.Forms;
 using BerichtsheftBuilder.service;
+using BerichtsheftBuilder.Service;
 using Microsoft.Extensions.DependencyInjection;
 using QuestPDF.Infrastructure;
 using System;
@@ -32,6 +33,8 @@ namespace BerichtsheftBuilder
         {
             serviceCollection = new ServiceCollection();
             serviceCollection.AddSingleton<ProfileService>();
+            serviceCollection.AddSingleton<PDFService>();
+            serviceCollection.AddSingleton<DialogCenteringService>();
             serviceProvider = serviceCollection.BuildServiceProvider();
         }
 

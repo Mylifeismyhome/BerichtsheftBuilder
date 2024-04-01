@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
+using BerichtsheftBuilder.Dto;
 using BerichtsheftBuilder.service;
+using BerichtsheftBuilder.Service;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BerichtsheftBuilder
@@ -12,7 +14,9 @@ namespace BerichtsheftBuilder
     {
         private ProfileService profileService = Program.ServiceProvider.GetService<ProfileService>();
 
-        private List<DateUtils.CalendarWeek> calendarWeekList;
+        private PDFService pdfService = Program.ServiceProvider.GetService<PDFService>();
+
+        private List<DateDto.CalendarWeek> calendarWeekList;
 
         private List<dto.TaskDto> calendarWeekTaskListView;
 
@@ -24,11 +28,11 @@ namespace BerichtsheftBuilder
 
         private void applyProfile()
         {
-            TB_Name.Text = profileService.Name;
-            TB_AusbilderName.Text = profileService.AusbilderName;
-            DTP_Ausbildungsstart.Value = profileService.Ausbildungsstart;
-            DTP_Ausbildungsende.Value = profileService.Ausbildungsend;
-            TB_Ausbildungsabteilung.Text = profileService.Ausbildungsabteilung;
+            TB_Name.Text = profileService.Profile.Name;
+            TB_AusbilderName.Text = profileService.Profile.AusbilderName;
+            DTP_Ausbildungsstart.Value = profileService.Profile.Ausbildungsstart;
+            DTP_Ausbildungsende.Value = profileService.Profile.Ausbildungsend;
+            TB_Ausbildungsabteilung.Text = profileService.Profile.Ausbildungsabteilung;
 
             UpdateCalenderWeekComboBox();
             SetComboBoxToCurrentCalenderWeek();
@@ -38,7 +42,7 @@ namespace BerichtsheftBuilder
         {
             if (calendarWeekList is null)
             {
-                calendarWeekList = new List<DateUtils.CalendarWeek>();
+                calendarWeekList = new List<DateDto.CalendarWeek>();
             }
             else
             {
@@ -48,7 +52,7 @@ namespace BerichtsheftBuilder
             DateTime tmpAusbildungsstart = DTP_Ausbildungsstart.Value;
             while (tmpAusbildungsstart.CompareTo(DTP_Ausbildungsende.Value) <= 0)
             {
-                DateUtils.CalendarWeek kalenderwoche = DateUtils.GetCalendarWeek(tmpAusbildungsstart);
+                DateDto.CalendarWeek kalenderwoche = DateDto.GetCalendarWeek(tmpAusbildungsstart);
                 calendarWeekList.Add(kalenderwoche);
                 tmpAusbildungsstart = tmpAusbildungsstart.AddDays(7);
             }
@@ -64,8 +68,8 @@ namespace BerichtsheftBuilder
                 return;
             }
 
-            DateUtils.CalendarWeek calendarWeek = calendarWeekList[CB_Kalenderwoche.SelectedIndex];
-            calendarWeekTaskListView = profileService.TaskList.FindAll(it => it.CalendarWeek.Match(calendarWeek));
+            DateDto.CalendarWeek calendarWeek = calendarWeekList[CB_Kalenderwoche.SelectedIndex];
+            calendarWeekTaskListView = profileService.Profile.TaskList.FindAll(it => it.CalendarWeek.Match(calendarWeek));
 
             RTB_Task.Text = "";
 
@@ -94,10 +98,10 @@ namespace BerichtsheftBuilder
 
         private void SetComboBoxToCurrentCalenderWeek()
         {
-            DateUtils.CalendarWeek currentCalenderWeek = DateUtils.GetCalendarWeek(DateTime.Today);
+            DateDto.CalendarWeek currentCalenderWeek = DateDto.GetCalendarWeek(DateTime.Today);
             foreach (object item in CB_Kalenderwoche.Items)
             {
-                DateUtils.CalendarWeek calendarWeek = item as DateUtils.CalendarWeek;
+                DateDto.CalendarWeek calendarWeek = item as DateDto.CalendarWeek;
                 if (calendarWeek.Match(currentCalenderWeek))
                 {
                     CB_Kalenderwoche.SelectedItem = item;
@@ -126,7 +130,7 @@ namespace BerichtsheftBuilder
 
         private void BTN_Generate_Click(object sender, EventArgs e)
         {
-            PDFGen.generate("output.pdf", profileService);
+            pdfService.generate("output.pdf");
         }
 
         private void RTB_Task_TextChanged(object sender, EventArgs e)
@@ -135,14 +139,14 @@ namespace BerichtsheftBuilder
             taskDescList.ForEach(it => it.Replace("\n", ""));
             taskDescList.RemoveAll(it => string.IsNullOrEmpty(it));
 
-            DateUtils.CalendarWeek calendarWeek = calendarWeekList[CB_Kalenderwoche.SelectedIndex];
+            DateDto.CalendarWeek calendarWeek = calendarWeekList[CB_Kalenderwoche.SelectedIndex];
 
-            profileService.TaskList.RemoveAll(it => it.CalendarWeek.Match(calendarWeek) && !it.IsSchool);
+            profileService.Profile.TaskList.RemoveAll(it => it.CalendarWeek.Match(calendarWeek) && !it.IsSchool);
 
             foreach (string taskDesc in taskDescList)
             {
                 dto.TaskDto taskDto = dto.TaskDto.valueOf(calendarWeek, taskDesc, false);
-                profileService.TaskList.Add(taskDto);
+                profileService.Profile.TaskList.Add(taskDto);
             }
 
             profileService.Save();
@@ -154,14 +158,14 @@ namespace BerichtsheftBuilder
             taskDescList.ForEach(it => it.Replace("\n", ""));
             taskDescList.RemoveAll(it => string.IsNullOrEmpty(it));
 
-            DateUtils.CalendarWeek calendarWeek = calendarWeekList[CB_Kalenderwoche.SelectedIndex];
+            DateDto.CalendarWeek calendarWeek = calendarWeekList[CB_Kalenderwoche.SelectedIndex];
 
-            profileService.TaskList.RemoveAll(it => it.CalendarWeek.Match(calendarWeek) && it.IsSchool);
+            profileService.Profile.TaskList.RemoveAll(it => it.CalendarWeek.Match(calendarWeek) && it.IsSchool);
 
             foreach (string taskDesc in taskDescList)
             {
                 dto.TaskDto taskDto = dto.TaskDto.valueOf(calendarWeek, taskDesc, true);
-                profileService.TaskList.Add(taskDto);
+                profileService.Profile.TaskList.Add(taskDto);
             }
 
             profileService.Save();

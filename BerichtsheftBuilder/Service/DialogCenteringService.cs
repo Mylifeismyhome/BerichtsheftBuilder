@@ -5,15 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace BerichtsheftBuilder
+namespace BerichtsheftBuilder.Service
 {
     public class DialogCenteringService : IDisposable
     {
-        private readonly IWin32Window owner;
-        private readonly HookProc hookProc;
-        private readonly IntPtr hHook = IntPtr.Zero;
+        private IWin32Window owner;
+        private HookProc hookProc;
+        private IntPtr hHook = IntPtr.Zero;
 
-        public DialogCenteringService(IWin32Window owner)
+        public void nextOwner(IWin32Window owner)
         {
             if (owner == null) throw new ArgumentNullException("owner");
 
@@ -75,13 +75,13 @@ namespace BerichtsheftBuilder
             }
 
             Point ptCenter = new Point(0, 0);
-            ptCenter.X = recParent.X + ((recParent.Width - recParent.X) / 2);
-            ptCenter.Y = recParent.Y + ((recParent.Height - recParent.Y) / 2);
+            ptCenter.X = recParent.X + (recParent.Width - recParent.X) / 2;
+            ptCenter.Y = recParent.Y + (recParent.Height - recParent.Y) / 2;
 
 
             Point ptStart = new Point(0, 0);
-            ptStart.X = (ptCenter.X - (width / 2));
-            ptStart.Y = (ptCenter.Y - (height / 2));
+            ptStart.X = ptCenter.X - width / 2;
+            ptStart.Y = ptCenter.Y - height / 2;
 
             //MoveWindow(hChildWnd, ptStart.X, ptStart.Y, width, height, false);
             Task.Factory.StartNew(() => SetWindowPos(hChildWnd, (IntPtr)0, ptStart.X, ptStart.Y, width, height, SetWindowPosFlags.SWP_ASYNCWINDOWPOS | SetWindowPosFlags.SWP_NOSIZE | SetWindowPosFlags.SWP_NOACTIVATE | SetWindowPosFlags.SWP_NOOWNERZORDER | SetWindowPosFlags.SWP_NOZORDER));

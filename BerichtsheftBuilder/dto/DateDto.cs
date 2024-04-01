@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Globalization;
-using static System.Windows.Forms.DataFormats;
 
-namespace BerichtsheftBuilder
+namespace BerichtsheftBuilder.Dto
 {
-    public class DateUtils
+    public class DateDto
     {
         [Serializable()]
         public class CalendarWeek
@@ -58,7 +57,7 @@ namespace BerichtsheftBuilder
 
             public bool Match(CalendarWeek other)
             {
-                return (week == other.week && year == other.year);
+                return week == other.week && year == other.year;
             }
 
             public override string ToString()

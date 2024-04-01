@@ -10,8 +10,14 @@ using System.Linq;
 
 namespace BerichtsheftBuilder.service
 {
-    public class ProfileService : ProfileDto
+    public class ProfileService
     {
+        private ProfileDto profile;
+        public ProfileDto Profile
+        {
+            get => profile;
+        }
+
         public delegate void OnReadDelegate();
         private OnReadDelegate onRead;
         public OnReadDelegate OnRead
@@ -22,81 +28,8 @@ namespace BerichtsheftBuilder.service
 
         public ProfileService()
         {
-            version = 1;
-            sftp = new SFTPDto();
-
-            name = "";
-            ausbilderName = "";
-            ausbildungsstart = new DateTime();
-            ausbildungsend = new DateTime();
-            taskList = new List<TaskDto>();
-
+            profile = new ProfileDto();
             onRead = new OnReadDelegate(() => { });
-        }
-
-        private void BinaryWriter(IFormatter formatter, Stream stream, object obj)
-        {
-            if (formatter == null || stream == null)
-            {
-                return;
-            }
-
-            try
-            {
-                formatter.Serialize(stream, obj);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private object BinaryRead(IFormatter formatter, Stream stream)
-        {
-            if (formatter == null || stream == null)
-            {
-                return null;
-            }
-
-            try
-            {
-                return formatter.Deserialize(stream);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                return null;
-            }
-        }
-
-        private void writeToStream(Stream stream)
-        {
-            IFormatter formatter = new BinaryFormatter();
-
-            BinaryWriter(formatter, stream, version);
-            BinaryWriter(formatter, stream, sftp);
-
-            BinaryWriter(formatter, stream, name);
-            BinaryWriter(formatter, stream, ausbilderName);
-            BinaryWriter(formatter, stream, ausbildungsstart);
-            BinaryWriter(formatter, stream, ausbildungsend);
-            BinaryWriter(formatter, stream, ausbildungsabteilung);
-            BinaryWriter(formatter, stream, taskList);
-        }
-
-        private void readFromStream(Stream stream)
-        {
-            IFormatter formatter = new BinaryFormatter();
-
-            version = (ushort)BinaryRead(formatter, stream);
-            sftp = (SFTPDto)BinaryRead(formatter, stream);
-
-            name = (string)BinaryRead(formatter, stream);
-            ausbilderName = (string)BinaryRead(formatter, stream);
-            ausbildungsstart = (DateTime)BinaryRead(formatter, stream);
-            ausbildungsend = (DateTime)BinaryRead(formatter, stream);
-            ausbildungsabteilung = (string)BinaryRead(formatter, stream);
-            taskList = (List<TaskDto>)BinaryRead(formatter, stream);
         }
 
         public bool Save()
@@ -110,7 +43,8 @@ namespace BerichtsheftBuilder.service
                         return false;
                     }
 
-                    writeToStream(stream);
+                    profile.writeToStream(stream);
+
                     return true;
                 }
             }
@@ -133,7 +67,7 @@ namespace BerichtsheftBuilder.service
                     }
 
                     IFormatter formatter = new BinaryFormatter();
-                    readFromStream(stream);
+                    profile.readFromStream(stream);
                     onRead.Invoke();
                     return true;
                 }
@@ -149,7 +83,7 @@ namespace BerichtsheftBuilder.service
         {
             using (MemoryStream memoryStream = new MemoryStream())
             {
-                SftpClient client = new SftpClient(sftp.Host, sftp.Port, sftp.Username, sftp.Password);
+                SftpClient client = new SftpClient(profile.Sftp.Host, profile.Sftp.Port, profile.Sftp.Username, profile.Sftp.Password);
 
                 try
                 {
@@ -164,7 +98,7 @@ namespace BerichtsheftBuilder.service
 
                     if (!fileExists)
                     {
-                        writeToStream(memoryStream);
+                        profile.writeToStream(memoryStream);
                         client.WriteAllBytes("profile.bin", memoryStream.ToArray());
                         return;
                     }
@@ -173,25 +107,25 @@ namespace BerichtsheftBuilder.service
                     memoryStream.Write(data, 0, data.Length);
                     memoryStream.Position = 0;
 
-                    ProfileService tempProfileStorage = new ProfileService();
-                    tempProfileStorage.readFromStream(memoryStream);
+                    ProfileDto tempProfile = new ProfileDto();
+                    tempProfile.readFromStream(memoryStream);
 
-                    if (version != tempProfileStorage.version)
+                    if (profile.Version != tempProfile.Version)
                     {
                         throw new Exception("Version mismatch");
                     }
 
-                    name = tempProfileStorage.name;
-                    ausbilderName = tempProfileStorage.ausbilderName;
-                    ausbildungsstart = tempProfileStorage.ausbildungsstart;
-                    ausbildungsend = tempProfileStorage.ausbildungsend;
-                    ausbildungsabteilung = tempProfileStorage.ausbildungsabteilung;
-                    taskList = taskList.Union(tempProfileStorage.taskList).ToList();
+                    profile.Name = tempProfile.Name;
+                    profile.AusbilderName = tempProfile.AusbilderName;
+                    profile.Ausbildungsstart = tempProfile.Ausbildungsstart;
+                    profile.Ausbildungsend = tempProfile.Ausbildungsend;
+                    profile.Ausbildungsabteilung = tempProfile.Ausbildungsabteilung;
+                    profile.TaskList = profile.TaskList.Union(tempProfile.TaskList).ToList();
 
                     memoryStream.Flush();
                     memoryStream.Position = 0;
 
-                    writeToStream(memoryStream);
+                    profile.writeToStream(memoryStream);
 
                     client.WriteAllBytes("profile.bin", memoryStream.ToArray());
                 }

@@ -1,31 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
+using BerichtsheftBuilder.dto;
+using BerichtsheftBuilder.Dto;
 using BerichtsheftBuilder.service;
+using Microsoft.Extensions.DependencyInjection;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 
-namespace BerichtsheftBuilder
+namespace BerichtsheftBuilder.Service
 {
-    public static class PDFGen
+    public class PDFService
     {
-        public static void generate(string path, ProfileService profileService, string fontFamily = "Helvetica")
+        private ProfileService profileService = Program.ServiceProvider.GetService<ProfileService>();
+
+        public void generate(string path, string fontFamily = "Helvetica")
         {
+            ProfileDto profile = profileService.Profile;
+
             Document.Create(container =>
             {
-                DateTime tmpAusbildungsstart = profileService.Ausbildungsstart;
+                DateTime tmpAusbildungsstart = profile.Ausbildungsstart;
                 int year = 1;
                 DateTime yearEnd = tmpAusbildungsstart.AddYears(1);
-                while (tmpAusbildungsstart.CompareTo(profileService.Ausbildungsend) <= 0)
+                while (tmpAusbildungsstart.CompareTo(profile.Ausbildungsend) <= 0)
                 {
-                    DateUtils.CalendarWeek kalenderwoche = DateUtils.GetCalendarWeek(tmpAusbildungsstart);
+                    DateDto.CalendarWeek kalenderwoche = DateDto.GetCalendarWeek(tmpAusbildungsstart);
 
-                    if (kalenderwoche.WeekStartDate.CompareTo(profileService.Ausbildungsstart) < 0)
+                    if (kalenderwoche.WeekStartDate.CompareTo(profile.Ausbildungsstart) < 0)
                     {
-                        kalenderwoche.WeekStartDate = profileService.Ausbildungsstart;
+                        kalenderwoche.WeekStartDate = profile.Ausbildungsstart;
                     }
-                    else if (kalenderwoche.WeekEndDate.CompareTo(profileService.Ausbildungsend) > 0)
+                    else if (kalenderwoche.WeekEndDate.CompareTo(profile.Ausbildungsend) > 0)
                     {
-                        kalenderwoche.WeekEndDate = profileService.Ausbildungsend;
+                        kalenderwoche.WeekEndDate = profile.Ausbildungsend;
                     }
 
                     if (tmpAusbildungsstart.CompareTo(yearEnd) >= 0)
@@ -125,7 +132,7 @@ namespace BerichtsheftBuilder
                                             .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
 
-                                        text.Span(profileService.Name)
+                                        text.Span(profile.Name)
                                             .SemiBold()
                                             .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
@@ -141,7 +148,7 @@ namespace BerichtsheftBuilder
                                             .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
 
-                                        text.Span(profileService.Ausbildungsabteilung)
+                                        text.Span(profile.Ausbildungsabteilung)
                                             .SemiBold()
                                             .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
@@ -168,8 +175,8 @@ namespace BerichtsheftBuilder
                                                     .FontColor("#212529");
                                               });
 
-                                          List<dto.TaskDto> taskList = profileService.TaskList.FindAll(it => it.CalendarWeek.Match(kalenderwoche));
-                                          
+                                          List<TaskDto> taskList = profile.TaskList.FindAll(it => it.CalendarWeek.Match(kalenderwoche));
+
                                           taskList.RemoveAll(it => it.IsSchool);
 
                                           taskList.ForEach(task =>
@@ -200,7 +207,7 @@ namespace BerichtsheftBuilder
                                                     .FontColor("#212529");
                                               });
 
-                                          List<dto.TaskDto> taskList = profileService.TaskList.FindAll(it => it.CalendarWeek.Match(kalenderwoche));
+                                          List<TaskDto> taskList = profile.TaskList.FindAll(it => it.CalendarWeek.Match(kalenderwoche));
 
                                           taskList.RemoveAll(it => !it.IsSchool);
 

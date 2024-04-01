@@ -1,8 +1,13 @@
-﻿using System;
+﻿using BerichtsheftBuilder.Forms;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace BerichtsheftBuilder.dto
 {
@@ -13,6 +18,7 @@ namespace BerichtsheftBuilder.dto
         public ushort Version
         {
             get => version;
+            set => version = value;
         }
 
         protected string name;
@@ -61,6 +67,69 @@ namespace BerichtsheftBuilder.dto
         public SFTPDto Sftp
         {
             get => sftp;
+            set => sftp = value;
+        }
+
+        public ProfileDto()
+        {
+            version = 1;
+            sftp = new SFTPDto();
+
+            name = "";
+            ausbilderName = "";
+            ausbildungsstart = new DateTime();
+            ausbildungsend = new DateTime();
+            taskList = new List<TaskDto>();
+        }
+
+        protected void BinaryWriter(IFormatter formatter, Stream stream, object obj)
+        {
+            if (formatter == null || stream == null)
+            {
+                return;
+            }
+
+            formatter.Serialize(stream, obj);
+        }
+
+        protected object BinaryRead(IFormatter formatter, Stream stream)
+        {
+            if (formatter == null || stream == null)
+            {
+                return null;
+            }
+
+            return formatter.Deserialize(stream);
+        }
+
+        public void writeToStream(Stream stream)
+        {
+            IFormatter formatter = new BinaryFormatter();
+
+            BinaryWriter(formatter, stream, version);
+            BinaryWriter(formatter, stream, sftp);
+
+            BinaryWriter(formatter, stream, name);
+            BinaryWriter(formatter, stream, ausbilderName);
+            BinaryWriter(formatter, stream, ausbildungsstart);
+            BinaryWriter(formatter, stream, ausbildungsend);
+            BinaryWriter(formatter, stream, ausbildungsabteilung);
+            BinaryWriter(formatter, stream, taskList);
+        }
+
+        public void readFromStream(Stream stream)
+        {
+            IFormatter formatter = new BinaryFormatter();
+
+            version = (ushort)BinaryRead(formatter, stream);
+            sftp = (SFTPDto)BinaryRead(formatter, stream);
+
+            name = (string)BinaryRead(formatter, stream);
+            ausbilderName = (string)BinaryRead(formatter, stream);
+            ausbildungsstart = (DateTime)BinaryRead(formatter, stream);
+            ausbildungsend = (DateTime)BinaryRead(formatter, stream);
+            ausbildungsabteilung = (string)BinaryRead(formatter, stream);
+            taskList = (List<TaskDto>)BinaryRead(formatter, stream);
         }
     }
 }

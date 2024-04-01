@@ -207,10 +207,10 @@
             TP_SFTP.Controls.Add(LB_Host);
             TP_SFTP.Controls.Add(TB_Host);
             TP_SFTP.Controls.Add(LB_IsEnabled);
-            TP_SFTP.Location = new System.Drawing.Point(4, 24);
+            TP_SFTP.Location = new System.Drawing.Point(4, 25);
             TP_SFTP.Name = "TP_SFTP";
             TP_SFTP.Padding = new System.Windows.Forms.Padding(3);
-            TP_SFTP.Size = new System.Drawing.Size(452, 202);
+            TP_SFTP.Size = new System.Drawing.Size(452, 201);
             TP_SFTP.TabIndex = 1;
             TP_SFTP.Text = "SFTP";
             TP_SFTP.UseVisualStyleBackColor = true;
@@ -306,9 +306,9 @@
             LB_IsEnabled.Location = new System.Drawing.Point(12, 29);
             LB_IsEnabled.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             LB_IsEnabled.Name = "LB_IsEnabled";
-            LB_IsEnabled.Size = new System.Drawing.Size(57, 16);
+            LB_IsEnabled.Size = new System.Drawing.Size(50, 16);
             LB_IsEnabled.TabIndex = 6;
-            LB_IsEnabled.Text = "Enabled:";
+            LB_IsEnabled.Text = "Enable:";
             // 
             // Profile
             // 
