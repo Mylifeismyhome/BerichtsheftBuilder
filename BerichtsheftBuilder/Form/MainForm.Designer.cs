@@ -113,7 +113,7 @@ namespace BerichtsheftBuilder
             CB_Kalenderwoche.Location = new System.Drawing.Point(301, 29);
             CB_Kalenderwoche.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             CB_Kalenderwoche.Name = "CB_Kalenderwoche";
-            CB_Kalenderwoche.Size = new System.Drawing.Size(230, 24);
+            CB_Kalenderwoche.Size = new System.Drawing.Size(765, 24);
             CB_Kalenderwoche.TabIndex = 4;
             CB_Kalenderwoche.SelectedIndexChanged += CB_Kalenderwoche_SelectedIndexChanged;
             // 

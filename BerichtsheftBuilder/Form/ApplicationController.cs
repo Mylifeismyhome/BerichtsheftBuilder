@@ -63,7 +63,7 @@ namespace BerichtsheftBuilder.Form
                 form.Dispose();
             }
 
-            newForm = form;
+            form = newForm;
         }
 
         private void onFormClosed(object sender, FormClosedEventArgs e)

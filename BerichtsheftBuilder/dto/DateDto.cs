@@ -64,12 +64,7 @@ namespace BerichtsheftBuilder.Dto
 
         public override string ToString()
         {
-            return $"Woche: {Week}, Jahr: {Year}";
-        }
-
-        public string ToLongString()
-        {
-            return $"Woche: {Week}, Jahr: {Year}, Startdatum: {StartDateAsString()}, Enddatum: {EndDateAsString()}";
+            return $"Woche vom {StartDateAsString()} bis {EndDateAsString()} (Kalenderwoche {week}, Jahr {year})";
         }
 
         public string StartDateAsString()

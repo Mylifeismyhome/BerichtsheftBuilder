@@ -178,6 +178,8 @@ namespace BerichtsheftBuilder.Service
 
                                           taskList.RemoveAll(it => it.IsSchool);
 
+                                          column.Item().PaddingTop(10);
+
                                           taskList.ForEach(task =>
                                           {
                                               column.Item()
@@ -209,6 +211,8 @@ namespace BerichtsheftBuilder.Service
                                           List<TaskDto> taskList = profile.TaskList.FindAll(it => it.Date.Match(kalenderwoche));
 
                                           taskList.RemoveAll(it => !it.IsSchool);
+
+                                          column.Item().PaddingTop(10);
 
                                           taskList.ForEach(task =>
                                           {
