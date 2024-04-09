@@ -81,7 +81,21 @@ namespace BerichtsheftBuilder.Service
 
                     byte[] utf8 = profileService.Profile.serializeUtf8();
 
-                    var fileStream = client.Open(profileService.FileName, FileMode.OpenOrCreate | FileMode.Truncate);
+                    Renci.SshNet.Sftp.SftpFileStream fileStream = null;
+
+                    if (!client.Exists(profileService.FileName))
+                    {
+                        fileStream = client.Create(profileService.FileName);
+                    } else
+                    {
+                        fileStream = client.Open(profileService.FileName, FileMode.OpenOrCreate | FileMode.Truncate);
+                    }
+
+                    if(fileStream == null)
+                    {
+                        throw new Exception("No Filestream");
+                    }
+                  
                     fileStream.Write(utf8, 0, utf8.Length);
                     fileStream.Close();
                 }
