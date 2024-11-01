@@ -239,7 +239,7 @@ namespace BerichtsheftBuilder.Service
                                                     {
                                                         row.AutoItem().PaddingLeft(1).Text(text =>
                                                         {
-                                                            text.Span($"{task.Duration}h").FontFamily(fontFamily).FontColor("#212529");
+                                                            text.Span(task.formattedDuration).FontFamily(fontFamily).FontColor("#212529");
                                                         });
                                                     });
                                                 });
@@ -313,9 +313,7 @@ namespace BerichtsheftBuilder.Service
                                                         row.Spacing(5);
                                                         row.AutoItem().Text(text =>
                                                         {
-                                                            text.Span($"{task.Duration}h")
-                                                              .FontFamily(fontFamily)
-                                                              .FontColor("#212529");
+                                                            text.Span(task.formattedDuration).FontFamily(fontFamily).FontColor("#212529");
                                                         });
                                                     });
                                                 });

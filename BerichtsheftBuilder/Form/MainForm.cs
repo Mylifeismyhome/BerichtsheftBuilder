@@ -218,13 +218,12 @@ namespace BerichtsheftBuilder
                     MessageBox.Show("Fehler: Mehr als ein '|' Trenner wurde in einer Zeile für die Stundenangabe gefunden. Bitte verwenden Sie nur einen '|' pro Zeile.", "Ungültige Eingabe", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
 
-                string desc = arr[0];
+                string desc = arr[0].Trim();
                 float duration = 0.0f;
 
                 if (arr.Length == 2)
                 {
-                    string tmp = arr[1];
-                    tmp = tmp.Trim();
+                    string tmp = arr[1].Trim();
 
                     if (!string.IsNullOrEmpty(tmp))
                     {
@@ -266,13 +265,12 @@ namespace BerichtsheftBuilder
                     MessageBox.Show("Fehler: Mehr als ein '|' Trenner wurde in einer Zeile für die Stundenangabe gefunden. Bitte verwenden Sie nur einen '|' pro Zeile.", "Ungültige Eingabe", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
 
-                string desc = arr[0];
+                string desc = arr[0].Trim();
                 float duration = 0.0f;
 
                 if (arr.Length == 2)
                 {
-                    string tmp = arr[1];
-                    tmp = tmp.Trim();
+                    string tmp = arr[1].Trim();
 
                     if (!string.IsNullOrEmpty(tmp))
                     {
