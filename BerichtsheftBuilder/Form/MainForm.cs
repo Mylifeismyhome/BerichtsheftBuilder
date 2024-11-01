@@ -123,7 +123,7 @@ namespace BerichtsheftBuilder
                     continue;
                 }
 
-                RTB_Task.Text += task.Desc + "| " + task.Duration.ToString() + "\n";
+                RTB_Task.Text += task.Desc + " | " + task.Duration.ToString() + "\n";
             }
 
             RTB_SchoolTask.Text = "";
@@ -135,7 +135,7 @@ namespace BerichtsheftBuilder
                     continue;
                 }
 
-                RTB_SchoolTask.Text += task.Desc + "| " + task.Duration.ToString() + "\n";
+                RTB_SchoolTask.Text += task.Desc + " | " + task.Duration.ToString() + "\n";
             }
         }
 
@@ -200,7 +200,7 @@ namespace BerichtsheftBuilder
             pdfService.generate("output.pdf");
         }
 
-        private void RTB_Task_TextChanged(object sender, EventArgs e)
+        private void RTB_Task_KeyUp(object sender, EventArgs e)
         {
             List<string> taskDescList = RTB_Task.Text.Split('\n').ToList();
             taskDescList.ForEach(it => it.Replace("\n", ""));
@@ -248,7 +248,7 @@ namespace BerichtsheftBuilder
             profileService.save();
         }
 
-        private void RTB_SchoolTask_TextChanged(object sender, EventArgs e)
+        private void RTB_SchoolTask_KeyUp(object sender, EventArgs e)
         {
             List<string> taskDescList = RTB_SchoolTask.Text.Split('\n').ToList();
             taskDescList.ForEach(it => it.Replace("\n", ""));

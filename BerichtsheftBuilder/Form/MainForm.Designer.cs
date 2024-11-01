@@ -358,7 +358,7 @@ namespace BerichtsheftBuilder
             RTB_Task.Size = new System.Drawing.Size(870, 300);
             RTB_Task.TabIndex = 15;
             RTB_Task.Text = "";
-            RTB_Task.TextChanged += RTB_Task_TextChanged;
+            RTB_Task.KeyUp += RTB_Task_KeyUp;
             // 
             // RTB_SchoolTask
             // 
@@ -368,7 +368,7 @@ namespace BerichtsheftBuilder
             RTB_SchoolTask.Size = new System.Drawing.Size(870, 300);
             RTB_SchoolTask.TabIndex = 16;
             RTB_SchoolTask.Text = "";
-            RTB_SchoolTask.TextChanged += RTB_SchoolTask_TextChanged;
+            RTB_SchoolTask.KeyUp += RTB_SchoolTask_KeyUp;
             // 
             // label1
             // 
