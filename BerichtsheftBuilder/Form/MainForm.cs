@@ -123,7 +123,7 @@ namespace BerichtsheftBuilder
                     continue;
                 }
 
-                RTB_Task.Text += task.Desc + "\n";
+                RTB_Task.Text += task.Desc + "| " + task.Duration.ToString() + "\n";
             }
 
             RTB_SchoolTask.Text = "";
@@ -135,8 +135,28 @@ namespace BerichtsheftBuilder
                     continue;
                 }
 
-                RTB_SchoolTask.Text += task.Desc + "\n";
+                RTB_SchoolTask.Text += task.Desc + "| " + task.Duration.ToString() + "\n";
             }
+        }
+
+        private void updateTotalDurationView()
+        {
+            if (CB_Kalenderwoche.SelectedIndex > dateDtoList.Count - 1)
+            {
+                return;
+            }
+
+            DateDto calendarWeek = dateDtoList[CB_Kalenderwoche.SelectedIndex];
+            taskList = profileService.Profile.TaskList.FindAll(it => it.Date.Match(calendarWeek));
+
+            float duration = 0.0f;
+
+            foreach (TaskDto task in taskList)
+            {
+                duration += task.Duration;
+            }
+
+            LB_Total_Duration.Text = $"Insgesamt erfasste Sunden: {duration}";
         }
 
         private void SetComboBoxToCurrentCalenderWeek()
@@ -156,6 +176,7 @@ namespace BerichtsheftBuilder
         private void CB_Kalenderwoche_SelectedIndexChanged(object sender, EventArgs e)
         {
             updateTaskListView();
+            updateTotalDurationView();
         }
 
         private void BTN_Modify_Click(object sender, EventArgs e)
@@ -191,9 +212,38 @@ namespace BerichtsheftBuilder
 
             foreach (string taskDesc in taskDescList)
             {
-                TaskDto taskDto = new TaskDto(dateDto, taskDesc, false);
+                string[] arr = taskDesc.Split("|");
+                if (arr.Length > 2)
+                {
+                    MessageBox.Show("Fehler: Mehr als ein '|' Trenner wurde in einer Zeile für die Stundenangabe gefunden. Bitte verwenden Sie nur einen '|' pro Zeile.", "Ungültige Eingabe", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+                string desc = arr[0];
+                float duration = 0.0f;
+
+                if (arr.Length == 2)
+                {
+                    string tmp = arr[1];
+                    tmp = tmp.Trim();
+
+                    if (!string.IsNullOrEmpty(tmp))
+                    {
+                        try
+                        {
+                            duration = float.Parse(tmp);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message, "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+
+                TaskDto taskDto = new TaskDto(dateDto, desc, false, duration);
                 profileService.Profile.TaskList.Add(taskDto);
             }
+
+            updateTotalDurationView();
 
             profileService.save();
         }
@@ -210,9 +260,38 @@ namespace BerichtsheftBuilder
 
             foreach (string taskDesc in taskDescList)
             {
-                TaskDto taskDto = new TaskDto(dateDto, taskDesc, true);
+                string[] arr = taskDesc.Split("|");
+                if (arr.Length > 2)
+                {
+                    MessageBox.Show("Fehler: Mehr als ein '|' Trenner wurde in einer Zeile für die Stundenangabe gefunden. Bitte verwenden Sie nur einen '|' pro Zeile.", "Ungültige Eingabe", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+                string desc = arr[0];
+                float duration = 0.0f;
+
+                if (arr.Length == 2)
+                {
+                    string tmp = arr[1];
+                    tmp = tmp.Trim();
+
+                    if (!string.IsNullOrEmpty(tmp))
+                    {
+                        try
+                        {
+                            duration = float.Parse(tmp);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message, "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+
+                TaskDto taskDto = new TaskDto(dateDto, desc, true, duration);
                 profileService.Profile.TaskList.Add(taskDto);
             }
+
+            updateTotalDurationView();
 
             profileService.save();
         }

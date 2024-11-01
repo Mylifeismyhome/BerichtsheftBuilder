@@ -61,6 +61,7 @@ namespace BerichtsheftBuilder
             RTB_SchoolTask = new System.Windows.Forms.RichTextBox();
             label1 = new System.Windows.Forms.Label();
             LB_Task = new System.Windows.Forms.Label();
+            LB_Total_Duration = new System.Windows.Forms.Label();
             GP_Daten.SuspendLayout();
             GB_SFTP.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)NUD_SFTP_Port).BeginInit();
@@ -352,9 +353,9 @@ namespace BerichtsheftBuilder
             // 
             RTB_Task.BackColor = System.Drawing.SystemColors.Window;
             RTB_Task.Cursor = System.Windows.Forms.Cursors.IBeam;
-            RTB_Task.Location = new System.Drawing.Point(301, 83);
+            RTB_Task.Location = new System.Drawing.Point(300, 100);
             RTB_Task.Name = "RTB_Task";
-            RTB_Task.Size = new System.Drawing.Size(872, 320);
+            RTB_Task.Size = new System.Drawing.Size(870, 300);
             RTB_Task.TabIndex = 15;
             RTB_Task.Text = "";
             RTB_Task.TextChanged += RTB_Task_TextChanged;
@@ -362,9 +363,9 @@ namespace BerichtsheftBuilder
             // RTB_SchoolTask
             // 
             RTB_SchoolTask.Cursor = System.Windows.Forms.Cursors.IBeam;
-            RTB_SchoolTask.Location = new System.Drawing.Point(300, 427);
+            RTB_SchoolTask.Location = new System.Drawing.Point(300, 450);
             RTB_SchoolTask.Name = "RTB_SchoolTask";
-            RTB_SchoolTask.Size = new System.Drawing.Size(872, 320);
+            RTB_SchoolTask.Size = new System.Drawing.Size(870, 300);
             RTB_SchoolTask.TabIndex = 16;
             RTB_SchoolTask.Text = "";
             RTB_SchoolTask.TextChanged += RTB_SchoolTask_TextChanged;
@@ -372,7 +373,7 @@ namespace BerichtsheftBuilder
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(300, 406);
+            label1.Location = new System.Drawing.Point(300, 419);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(198, 16);
             label1.TabIndex = 17;
@@ -381,17 +382,28 @@ namespace BerichtsheftBuilder
             // LB_Task
             // 
             LB_Task.AutoSize = true;
-            LB_Task.Location = new System.Drawing.Point(301, 62);
+            LB_Task.Location = new System.Drawing.Point(301, 70);
             LB_Task.Name = "LB_Task";
             LB_Task.Size = new System.Drawing.Size(140, 16);
             LB_Task.TabIndex = 18;
             LB_Task.Text = "Betriebliche Tätigkeiten";
+            // 
+            // LB_Total_Duration
+            // 
+            LB_Total_Duration.Location = new System.Drawing.Point(447, 70);
+            LB_Total_Duration.Name = "LB_Total_Duration";
+            LB_Total_Duration.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            LB_Total_Duration.Size = new System.Drawing.Size(723, 16);
+            LB_Total_Duration.TabIndex = 19;
+            LB_Total_Duration.Text = "Insgesamt erfasste Sunden: 0";
+            LB_Total_Duration.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1184, 761);
+            Controls.Add(LB_Total_Duration);
             Controls.Add(LB_Task);
             Controls.Add(label1);
             Controls.Add(RTB_SchoolTask);
@@ -451,6 +463,7 @@ namespace BerichtsheftBuilder
         private System.Windows.Forms.Label LB_SFTP_LastCommit;
         private System.Windows.Forms.Label LB_SFTP_LastPull;
         private System.Windows.Forms.Button BTN_SFTP_Commit;
+        private System.Windows.Forms.Label LB_Total_Duration;
     }
 }
 

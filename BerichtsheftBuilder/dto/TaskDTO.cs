@@ -24,12 +24,19 @@ namespace BerichtsheftBuilder.Dto
             get => isSchool;
         }
 
+        protected float duration;
+        public float Duration
+        {
+            get => duration;
+        }
+
         [JsonConstructor]
-        public TaskDto(DateDto date, string desc, bool isSchool)
+        public TaskDto(DateDto date, string desc, bool isSchool, float duration = 0.0f)
         {
             this.date = date;
             this.desc = desc;
             this.isSchool = isSchool;
+            this.duration = duration;
         }
     }
 }

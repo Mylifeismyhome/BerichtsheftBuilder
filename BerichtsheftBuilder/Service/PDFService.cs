@@ -3,8 +3,13 @@ using BerichtsheftBuilder.service;
 using Microsoft.Extensions.DependencyInjection;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq;
+using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BerichtsheftBuilder.Service
 {
@@ -12,7 +17,7 @@ namespace BerichtsheftBuilder.Service
     {
         private ProfileService profileService = Program.ServiceProvider.GetService<ProfileService>();
 
-        public void generate(string path, string fontFamily = "Helvetica")
+        public void generate(string path, string fontFamily = "CMU Sans Serif")
         {
             ProfileDto profile = profileService.Profile;
 
@@ -40,10 +45,15 @@ namespace BerichtsheftBuilder.Service
                         yearEnd = tmpAusbildungsstart.AddYears(1);
                     }
 
+                    // Find all tasks for the specific calendar week
+                    var workTasks = profile.TaskList.FindAll(it => it.Date.Match(kalenderwoche) && !it.IsSchool);
+                    var schoolTasks = profile.TaskList.FindAll(it => it.Date.Match(kalenderwoche) && it.IsSchool);
+
                     container.Page(page =>
                     {
                         page.Size(PageSizes.A4);
 
+                        // header
                         page.Header().Background("#44d62c").Padding(10.0f).Row(row =>
                         {
                             row.RelativeItem()
@@ -155,81 +165,168 @@ namespace BerichtsheftBuilder.Service
                                 });
                         });
 
-                        page.Content().Background("#F5F5F5").Row(row =>
+                        // main page
+                        page.Content().Extend().Layers(layer =>
                         {
-                            row.RelativeItem()
-                              .Column(column =>
-                              {
-                                  column.Item().Row(row =>
-                                  {
-                                      row.RelativeItem().Column(column =>
-                                      {
-                                          column.Item()
-                                              .Background(Colors.Grey.Lighten2)
-                                              .Padding(10.0f)
-                                              .Text(text =>
-                                              {
-                                                  text.Span("Betriebliche Tätigkeiten")
-                                                    .FontFamily(fontFamily)
-                                                    .FontColor("#212529");
-                                              });
+                            layer.PrimaryLayer().Row(row =>
+                            {
+                                row.RelativeItem(0.75f).Background("#F5F5F5");
+                                row.RelativeItem(0.25f).Background(Colors.Grey.Lighten3);
+                            });
 
-                                          List<TaskDto> taskList = profile.TaskList.FindAll(it => it.Date.Match(kalenderwoche));
+                            layer.Layer().Row(row =>
+                            {
+                                row.RelativeItem().Column(column =>
+                                {
+                                    column.Item().AlignTop().Column(column =>
+                                    {
+                                        column.Item().Row(row =>
+                                        {
+                                            row.RelativeItem(0.75f).Column(column =>
+                                            {
+                                                column.Item().Background(Colors.Grey.Lighten2).PaddingVertical(10).Row(row =>
+                                                {
+                                                    row.AutoItem().PaddingLeft(5).Text(text =>
+                                                    {
+                                                        text.Span($"Betriebliche Tätigkeiten").FontFamily(fontFamily).FontColor("#212529");
+                                                    });
+                                                });
+                                            });
 
-                                          taskList.RemoveAll(it => it.IsSchool);
+                                            row.RelativeItem(0.25f).Column(column =>
+                                            {
+                                                column.Item().Background(Colors.Grey.Lighten2).PaddingVertical(10).Row(row =>
+                                                {
+                                                    row.AutoItem().PaddingLeft(1).Text(text =>
+                                                    {
+                                                        text.Span($"Stunden").FontFamily(fontFamily).FontColor("#212529");
+                                                    });
+                                                });
+                                            });
+                                        });
 
-                                          column.Item().PaddingTop(10);
+                                        workTasks.ForEach(task =>
+                                        {
+                                            column.Item().Row(row =>
+                                            {
+                                                row.RelativeItem(0.75f).Column(column =>
+                                                {
+                                                    column.Item().PaddingLeft(5).Row(row =>
+                                                    {
+                                                        row.Spacing(5);
 
-                                          taskList.ForEach(task =>
-                                          {
-                                              column.Item()
-                                                  .PaddingLeft(20)
-                                                  .Text(text =>
-                                                  {
-                                                      text.Span($"- {task.Desc}")
-                                                        .FontFamily(fontFamily)
-                                                        .FontColor("#212529");
-                                                  });
-                                          });
-                                      });
-                                  });
+                                                        row.AutoItem().Text(text =>
+                                                        {
+                                                            text.Span($"•")
+                                                                .FontFamily(fontFamily)
+                                                                .FontColor(Colors.Grey.Lighten1)
+                                                                .FontSize(11);
+                                                        });
 
-                                  column.Item().ExtendVertical().AlignMiddle().Row(row =>
-                                  {
-                                      row.RelativeItem().Column(column =>
-                                      {
-                                          column.Item()
-                                              .Background(Colors.Grey.Lighten2)
-                                              .Padding(10.0f)
-                                              .Text(text =>
-                                              {
-                                                  text.Span("Berufsschule (Unterrichtsthemen)")
-                                                    .FontFamily(fontFamily)
-                                                    .FontColor("#212529");
-                                              });
+                                                        row.RelativeItem().Text(text =>
+                                                        {
+                                                            text.Span($"{task.Desc}")
+                                                                .FontFamily(fontFamily)
+                                                                .FontColor("#212529")
+                                                                .FontSize(12);
+                                                        });
+                                                    });
+                                                });
 
-                                          List<TaskDto> taskList = profile.TaskList.FindAll(it => it.Date.Match(kalenderwoche));
+                                                row.RelativeItem(0.25f).Column(column =>
+                                                {
+                                                    column.Item().Row(row =>
+                                                    {
+                                                        row.AutoItem().PaddingLeft(1).Text(text =>
+                                                        {
+                                                            text.Span($"{task.Duration}h").FontFamily(fontFamily).FontColor("#212529");
+                                                        });
+                                                    });
+                                                });
+                                            });
+                                        });
+                                    });
 
-                                          taskList.RemoveAll(it => !it.IsSchool);
+                                    column.Item().ExtendVertical().AlignMiddle().Column(column =>
+                                    {
+                                        column.Item().Row(row =>
+                                        {
+                                            row.RelativeItem(0.75f).Column(column =>
+                                            {
+                                                column.Item()
+                                                 .Background(Colors.Grey.Lighten2)
+                                                 .Padding(10.0f)
+                                                 .Text(text =>
+                                                 {
+                                                     text.Span("Berufsschule (Unterrichtsthemen)")
+                                                       .FontFamily(fontFamily)
+                                                       .FontColor("#212529");
+                                                 });
+                                            });
 
-                                          column.Item().PaddingTop(10);
+                                            row.RelativeItem(0.25f).Column(column =>
+                                            {
+                                                column.Item()
+                                                   .Background(Colors.Grey.Lighten2)
+                                                   .Padding(10.0f)
+                                                   .Text(text =>
+                                                   {
+                                                       text.Span("Stunden")
+                                                         .FontFamily(fontFamily)
+                                                         .FontColor("#212529");
+                                                   });
+                                            });
+                                        });
 
-                                          taskList.ForEach(task =>
-                                          {
-                                              column.Item()
-                                                  .PaddingLeft(20)
-                                                  .Text(text =>
-                                                  {
-                                                      text.Span($"- {task.Desc}")
-                                                        .FontFamily(fontFamily)
-                                                        .FontColor("#212529");
-                                                  });
-                                          });
-                                      });
-                                  });
-                              });
+                                        schoolTasks.ForEach(task =>
+                                        {
+                                            column.Item().Row(row =>
+                                            {
+                                                row.RelativeItem(0.75f).Column(column =>
+                                                {
+                                                    column.Item().PaddingLeft(5).Row(row =>
+                                                    {
+                                                        row.Spacing(5);
+
+                                                        row.AutoItem().Text(text =>
+                                                        {
+                                                            text.Span($"•")
+                                                                .FontFamily(fontFamily)
+                                                                .FontColor(Colors.Grey.Lighten1)
+                                                                .FontSize(11);
+                                                        });
+
+                                                        row.RelativeItem().Text(text =>
+                                                        {
+                                                            text.Span($"{task.Desc}")
+                                                                .FontFamily(fontFamily)
+                                                                .FontColor("#212529")
+                                                                .FontSize(12);
+                                                        });
+                                                    });
+                                                });
+
+                                                row.RelativeItem(0.25f).Column(column =>
+                                                {
+                                                    column.Item().Row(row =>
+                                                    {
+                                                        row.Spacing(5);
+                                                        row.AutoItem().Text(text =>
+                                                        {
+                                                            text.Span($"{task.Duration}h")
+                                                              .FontFamily(fontFamily)
+                                                              .FontColor("#212529");
+                                                        });
+                                                    });
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
                         });
 
+                        // footer
                         page.Footer().Column(column =>
                         {
                             column.Item().Height(60).Row(row =>
@@ -285,6 +382,8 @@ namespace BerichtsheftBuilder.Service
                                         .BorderLeft(1)
                                         .BorderColor("#FFFFFF")
                                         .AlignMiddle()
+                                        .Padding(10)
+                                        .ScaleToFit()
                                         .Text(text =>
                                         {
                                             text.AlignCenter();
@@ -303,6 +402,8 @@ namespace BerichtsheftBuilder.Service
                                         .BorderLeft(1)
                                         .BorderColor("#FFFFFF")
                                         .AlignMiddle()
+                                        .Padding(10)
+                                        .ScaleToFit()
                                         .Text(text =>
                                         {
                                             text.AlignCenter();
@@ -321,6 +422,8 @@ namespace BerichtsheftBuilder.Service
                                         .BorderLeft(1)
                                         .BorderColor("#FFFFFF")
                                         .AlignMiddle()
+                                        .Padding(10)
+                                        .ScaleToFit()
                                         .Text(text =>
                                         {
                                             text.AlignCenter();
@@ -338,6 +441,8 @@ namespace BerichtsheftBuilder.Service
                                         .BorderLeft(1)
                                         .BorderColor("#FFFFFF")
                                         .AlignMiddle()
+                                        .Padding(10)
+                                        .ScaleToFit()
                                         .Text(text =>
                                         {
                                             text.AlignCenter();
