@@ -345,7 +345,7 @@ namespace BerichtsheftBuilder
             BTN_Generate.Name = "BTN_Generate";
             BTN_Generate.Size = new System.Drawing.Size(100, 50);
             BTN_Generate.TabIndex = 14;
-            BTN_Generate.Text = "Erstelle PDF";
+            BTN_Generate.Text = "Exportieren";
             BTN_Generate.UseVisualStyleBackColor = true;
             BTN_Generate.Click += BTN_Generate_Click;
             // 

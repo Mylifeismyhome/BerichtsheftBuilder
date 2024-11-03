@@ -48,7 +48,7 @@ namespace BerichtsheftBuilder
             ProfileService profileService = ServiceProvider.GetService<ProfileService>();
 
             applicationController.PostConstruct += (controller) => {
-                controller.switchForm(profileService.read() ? new MainForm() : new Profile());
+                controller.switchForm(profileService.read() ? new MainForm() : new ProfileForm());
             };
 
             Application.EnableVisualStyles();

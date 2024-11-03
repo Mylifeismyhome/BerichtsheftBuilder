@@ -16,8 +16,6 @@ namespace BerichtsheftBuilder
 
         private SFTPService sftpService = Program.ServiceProvider.GetService<SFTPService>();
 
-        private PDFService pdfService = Program.ServiceProvider.GetService<PDFService>();
-
         private CultureInfoService cultureInfoService = Program.ServiceProvider.GetService<CultureInfoService>();
 
         private DialogCenteringService dialogCenteringService = Program.ServiceProvider.GetService<DialogCenteringService>();
@@ -181,7 +179,7 @@ namespace BerichtsheftBuilder
 
         private void BTN_Modify_Click(object sender, EventArgs e)
         {
-            Forms.Profile profile = new Forms.Profile();
+            Forms.ProfileForm profile = new Forms.ProfileForm();
             profile.applyProfile();
             profile.IsModifyMode = true;
             profile.StartPosition = FormStartPosition.CenterParent;
@@ -197,7 +195,9 @@ namespace BerichtsheftBuilder
 
         private void BTN_Generate_Click(object sender, EventArgs e)
         {
-            pdfService.generate("output.pdf");
+            Forms.ExportForm export = new Forms.ExportForm();
+            export.StartPosition = FormStartPosition.CenterParent;
+            export.ShowDialog();
         }
 
         private void RTB_Task_KeyUp(object sender, EventArgs e)

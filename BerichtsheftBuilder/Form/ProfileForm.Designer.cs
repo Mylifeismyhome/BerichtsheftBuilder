@@ -1,6 +1,6 @@
 ﻿namespace BerichtsheftBuilder.Forms
 {
-    partial class Profile
+    partial class ProfileForm
     {
         /// <summary>
         /// Required designer variable.

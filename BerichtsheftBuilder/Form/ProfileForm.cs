@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace BerichtsheftBuilder.Forms
 {
-    public partial class Profile : System.Windows.Forms.Form
+    public partial class ProfileForm : System.Windows.Forms.Form
     {
         private ApplicationController applicationController = Program.ServiceProvider.GetService<ApplicationController>();
 
@@ -25,7 +25,7 @@ namespace BerichtsheftBuilder.Forms
             set => isModifyMode = value;
         }
 
-        public Profile()
+        public ProfileForm()
         {
             InitializeComponent();
             IsEnabledChanged();

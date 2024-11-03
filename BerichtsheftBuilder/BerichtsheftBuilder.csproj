@@ -12,4 +12,9 @@
     <PackageReference Include="QuestPDF" Version="2023.12.6" />
     <PackageReference Include="SSH.NET" Version="2024.0.0" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Form\ExportForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
 </Project>

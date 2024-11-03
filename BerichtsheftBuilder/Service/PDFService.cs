@@ -1,42 +1,32 @@
 ﻿using BerichtsheftBuilder.Dto;
 using BerichtsheftBuilder.service;
-using Microsoft.Extensions.DependencyInjection;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace BerichtsheftBuilder.Service
 {
     public class PDFService
     {
-        private ProfileService profileService = Program.ServiceProvider.GetService<ProfileService>();
-
-        public void generate(string path, string fontFamily = "CMU Sans Serif")
+        public void generate(string path, string name, string abteilung, DateTime begin, DateTime end, List<TaskDto> tasks, string fontFamily = "CMU Sans Serif")
         {
-            ProfileDto profile = profileService.Profile;
-
             Document.Create(container =>
             {
-                DateTime tmpAusbildungsstart = profile.Ausbildungsstart;
+                DateTime tmpAusbildungsstart = begin;
                 int year = 1;
                 DateTime yearEnd = tmpAusbildungsstart.AddYears(1);
-                while (tmpAusbildungsstart.CompareTo(profile.Ausbildungsend) <= 0)
+                while (tmpAusbildungsstart.CompareTo(end) <= 0)
                 {
                     DateDto kalenderwoche = DateDto.GetCalendarWeek(tmpAusbildungsstart);
 
-                    if (kalenderwoche.WeekStartDate.CompareTo(profile.Ausbildungsstart) < 0)
+                    if (kalenderwoche.WeekStartDate.CompareTo(begin) < 0)
                     {
-                        kalenderwoche.WeekStartDate = profile.Ausbildungsstart;
+                        kalenderwoche.WeekStartDate = begin;
                     }
-                    else if (kalenderwoche.WeekEndDate.CompareTo(profile.Ausbildungsend) > 0)
+                    else if (kalenderwoche.WeekEndDate.CompareTo(end) > 0)
                     {
-                        kalenderwoche.WeekEndDate = profile.Ausbildungsend;
+                        kalenderwoche.WeekEndDate = end;
                     }
 
                     if (tmpAusbildungsstart.CompareTo(yearEnd) >= 0)
@@ -45,9 +35,8 @@ namespace BerichtsheftBuilder.Service
                         yearEnd = tmpAusbildungsstart.AddYears(1);
                     }
 
-                    // Find all tasks for the specific calendar week
-                    var workTasks = profile.TaskList.FindAll(it => it.Date.Match(kalenderwoche) && !it.IsSchool);
-                    var schoolTasks = profile.TaskList.FindAll(it => it.Date.Match(kalenderwoche) && it.IsSchool);
+                    var workTasks = tasks.FindAll(it => it.Date.Match(kalenderwoche) && !it.IsSchool);
+                    var schoolTasks = tasks.FindAll(it => it.Date.Match(kalenderwoche) && it.IsSchool);
 
                     container.Page(page =>
                     {
@@ -141,7 +130,7 @@ namespace BerichtsheftBuilder.Service
                                             .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
 
-                                        text.Span(profile.Name)
+                                        text.Span(name)
                                             .SemiBold()
                                             .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
@@ -157,7 +146,7 @@ namespace BerichtsheftBuilder.Service
                                             .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
 
-                                        text.Span(profile.Ausbildungsabteilung)
+                                        text.Span(abteilung)
                                             .SemiBold()
                                             .FontFamily(fontFamily)
                                             .FontColor("#F5F5F5");
