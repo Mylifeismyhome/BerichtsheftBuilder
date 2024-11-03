@@ -64,6 +64,13 @@ namespace BerichtsheftBuilder.Dto
             set => sftp = value;
         }
 
+        protected string exportName;
+        public string ExportName
+        {
+            get => exportName;
+            set => exportName = value;
+        }
+
         public ProfileDto()
         {
             version = 1;
@@ -75,10 +82,12 @@ namespace BerichtsheftBuilder.Dto
             ausbildungsend = new DateTime();
             ausbildungsabteilung = "";
             taskList = new List<TaskDto>();
+
+            exportName = "output.pdf";
         }
 
         [JsonConstructor]
-        public ProfileDto(ushort version, string name, string ausbilderName, DateTime ausbildungsstart, DateTime ausbildungsend, string ausbildungsabteilung, List<TaskDto> taskList)
+        public ProfileDto(ushort version, string name, string ausbilderName, DateTime ausbildungsstart, DateTime ausbildungsend, string ausbildungsabteilung, List<TaskDto> taskList, string exportName = "output.pdf")
         {
             this.version = version;
             this.name = name;
@@ -87,6 +96,7 @@ namespace BerichtsheftBuilder.Dto
             this.ausbildungsend = ausbildungsend;
             this.ausbildungsabteilung = ausbildungsabteilung;
             this.taskList = taskList;
+            this.exportName = exportName;
         }
 
         public byte[] serializeUtf8()
@@ -115,6 +125,7 @@ namespace BerichtsheftBuilder.Dto
             Ausbildungsend = profile.ausbildungsend;
             ausbildungsabteilung = profile.ausbildungsabteilung;
             taskList = profile.taskList;
+            exportName = profile.exportName;
         }
     }
 }

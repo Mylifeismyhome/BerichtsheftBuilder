@@ -27,6 +27,7 @@ namespace BerichtsheftBuilder.Forms
             InitializeComponent();
             UpdateCalenderWeekComboBox();
             SetComboBoxToCurrentCalenderWeek();
+            TB_Export_Name.Text = profileService.Profile.ExportName;
         }
 
         private void UpdateCalenderWeekComboBox()
@@ -81,6 +82,10 @@ namespace BerichtsheftBuilder.Forms
             List<TaskDto> tasks = profileService.Profile.TaskList;
 
             pdfService.generate(outputName, name, abteilung, begin, end, tasks);
+
+            profileService.Profile.ExportName = outputName;
+
+            profileService.save();
 
             Dispose();
         }
